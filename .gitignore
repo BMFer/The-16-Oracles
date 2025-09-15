@@ -2,8 +2,73 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/The16Oracles/FileContentIndex/c075e8ab-6cec-4e5b-a347-f852d1be6377.vsidx
-/The16Oracles.domain/obj/project.nuget.cache
-/The16Oracles.domain/obj
-/.vs/The16Oracles/FileContentIndex/4e777028-8342-4411-aa3f-7fa2c2e958bc.vsidx
-/.vs/The16Oracles/FileContentIndex/c066ecd8-da9c-43c5-8b56-5d01ac1b70fc.vsidx
+
+*.vsidx
+
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio specific
+.vs/
+.vscode/
+*.vcxproj.user
+*.vcxproj.filters
+
+# Rider IDE specific
+.idea/
+
+# Auto-generated files
+Generated_Code/
+
+# Logs and databases
+*.log
+*.ldf
+*.mdf
+
+# Package directories
+packages/
+*.nupkg
+*.snupkg
+
+# DotNet specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+*.pdb
+*.pidb
+*.svclog
+*.tlog
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Resharper files
+_ReSharper*/
+*.DotSettings.user
+
+# Coverage results
+*.coverage
+*.coveragexml
+*.testsettings
+*.runsettings
+
+# Azure DevOps
+*.publishsettings
+*.azurePubxml
+*.azurePubxml.user
