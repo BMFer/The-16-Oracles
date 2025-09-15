@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "The16Oracles.console", "The16Oracles.console\The16Oracles.console.csproj", "{C253C833-FC77-4A88-B501-445EAA1BDCBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "The16Oracles.domain", "The16Oracles.domain\The16Oracles.domain.csproj", "{DD094CA9-E3A2-4DAA-92A1-7105E402789B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{C253C833-FC77-4A88-B501-445EAA1BDCBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C253C833-FC77-4A88-B501-445EAA1BDCBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C253C833-FC77-4A88-B501-445EAA1BDCBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD094CA9-E3A2-4DAA-92A1-7105E402789B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD094CA9-E3A2-4DAA-92A1-7105E402789B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD094CA9-E3A2-4DAA-92A1-7105E402789B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD094CA9-E3A2-4DAA-92A1-7105E402789B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
