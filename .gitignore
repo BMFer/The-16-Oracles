@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/The16Oracles/FileContentIndex/c075e8ab-6cec-4e5b-a347-f852d1be6377.vsidx
+/The16Oracles.domain/obj/project.nuget.cache
+/The16Oracles.domain/obj
