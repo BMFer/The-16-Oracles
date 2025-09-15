@@ -72,3 +72,4 @@ _ReSharper*/
 *.publishsettings
 *.azurePubxml
 *.azurePubxml.user
+/.vs/The16Oracles/DesignTimeBuild/.dtbcache.v2
