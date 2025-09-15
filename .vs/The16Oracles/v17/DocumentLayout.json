@@ -1,9 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\repo\\The16Oracles\\",
+  "WorkspaceRootPath": "C:\\Workspaces\\Oracles\\The-16-Oracles\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C253C833-FC77-4A88-B501-445EAA1BDCBC}|The16Oracles.console\\The16Oracles.console.csproj|c:\\repo\\the16oracles\\the16oracles.console\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C253C833-FC77-4A88-B501-445EAA1BDCBC}|The16Oracles.console\\The16Oracles.console.csproj|c:\\workspaces\\oracles\\the-16-oracles\\the16oracles.console\\the16oracles.console.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C253C833-FC77-4A88-B501-445EAA1BDCBC}|The16Oracles.console\\The16Oracles.console.csproj|solutionrelative:the16oracles.console\\the16oracles.console.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DD094CA9-E3A2-4DAA-92A1-7105E402789B}|The16Oracles.domain\\The16Oracles.domain.csproj|c:\\workspaces\\oracles\\the-16-oracles\\the16oracles.domain\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DD094CA9-E3A2-4DAA-92A1-7105E402789B}|The16Oracles.domain\\The16Oracles.domain.csproj|solutionrelative:the16oracles.domain\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C253C833-FC77-4A88-B501-445EAA1BDCBC}|The16Oracles.console\\The16Oracles.console.csproj|c:\\workspaces\\oracles\\the-16-oracles\\the16oracles.console\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C253C833-FC77-4A88-B501-445EAA1BDCBC}|The16Oracles.console\\The16Oracles.console.csproj|solutionrelative:the16oracles.console\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -14,8 +22,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 173,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "The16Oracles.console",
+              "DocumentMoniker": "C:\\Workspaces\\Oracles\\The-16-Oracles\\The16Oracles.console\\The16Oracles.console.csproj",
+              "RelativeDocumentMoniker": "The16Oracles.console\\The16Oracles.console.csproj",
+              "ToolTip": "C:\\Workspaces\\Oracles\\The-16-Oracles\\The16Oracles.console\\The16Oracles.console.csproj",
+              "RelativeToolTip": "The16Oracles.console\\The16Oracles.console.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-15T13:25:36.687Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -38,11 +59,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "C:\\Workspaces\\Oracles\\The-16-Oracles\\The16Oracles.domain\\Class1.cs",
+              "RelativeDocumentMoniker": "The16Oracles.domain\\Class1.cs",
+              "ToolTip": "C:\\Workspaces\\Oracles\\The-16-Oracles\\The16Oracles.domain\\Class1.cs",
+              "RelativeToolTip": "The16Oracles.domain\\Class1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-15T13:25:29.736Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\repo\\The16Oracles\\The16Oracles.console\\Program.cs",
+              "DocumentMoniker": "C:\\Workspaces\\Oracles\\The-16-Oracles\\The16Oracles.console\\Program.cs",
               "RelativeDocumentMoniker": "The16Oracles.console\\Program.cs",
-              "ToolTip": "C:\\repo\\The16Oracles\\The16Oracles.console\\Program.cs",
+              "ToolTip": "C:\\Workspaces\\Oracles\\The-16-Oracles\\The16Oracles.console\\Program.cs",
               "RelativeToolTip": "The16Oracles.console\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("The16Oracles.console")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfb9d53344be3faa8a9a8087012405d09c8fc858")]
 [assembly: System.Reflection.AssemblyProductAttribute("The16Oracles.console")]
 [assembly: System.Reflection.AssemblyTitleAttribute("The16Oracles.console")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
