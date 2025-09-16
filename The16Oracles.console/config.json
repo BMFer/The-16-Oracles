@@ -1,4 +1,45 @@
 {
+<<<<<<< Updated upstream
   "ProjectName": "The 16 Oracles",
   "ProjectVersion": "1.0.0"
+=======
+  "SolutionName": "The16Oracles",
+  "SolutionDisplayName": "The 16 Oracles",
+  "ProjectVersion": "1.0.0",
+  "Developer": "Shadow Oracle",
+  "Discords": [
+    {
+      "Id": 1,
+      "Name": "Rubbish Collector",
+      "Token": "token",
+      "CommandPrefix": "!",
+      "WelcomeChannelId": 1335724707646804093,
+      "AssetsChannelId": 1336886563409494026,
+      "LaunchpadUrl": "https://your-nft-launchpad.com",
+      "Oracles": [
+        {
+          "Id": 0,
+          "Name": "Black Swan"
+        },
+        {
+          "Id": 1,
+          "Name": "Rug Detection"
+        },
+        {
+          "Id": 2,
+          "Name": "Defi Movements"
+        }
+      ]
+    },
+    {
+      "Id": 2,
+      "Name": "Krypt Keeper",
+      "Token": "token",
+      "CommandPrefix": "!",
+      "WelcomeChannelId": 133572470761111111,
+      "AssetsChannelId": 1336886562222222222,
+      "LaunchpadUrl": "https://magiceden.com"
+    }
+  ]
+>>>>>>> Stashed changes
 }
