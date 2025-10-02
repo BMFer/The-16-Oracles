@@ -1,0 +1,6 @@
+@The16Oracles.DAOA_HostAddress = http://localhost:5051
+
+GET {{The16Oracles.DAOA_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
