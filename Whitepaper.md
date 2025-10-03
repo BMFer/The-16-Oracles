@@ -31,7 +31,7 @@ The 16 Oracles is a decentralized autonomous oracle application (DAOA) designed 
 
 The cryptocurrency and blockchain space has grown exponentially, creating an overwhelming amount of data across multiple chains, protocols, and market segments. Investors, traders, and developers struggle to synthesize this information into actionable insights. Traditional oracle systems focus primarily on price feeds, leaving critical market intelligence gaps.
 
-The 16 Oracles addresses this challenge by providing a comprehensive suite of specialized analytical oracles that monitor, analyze, and report on distinct aspects of the crypto ecosystemfrom macro market trends to on-chain metrics, from regulatory risks to emerging opportunities.
+The 16 Oracles addresses this challenge by providing a comprehensive suite of specialized analytical oracles that monitor, analyze, and report on distinct aspects of the crypto ecosystem, from macro market trends to on-chain metrics, from regulatory risks to emerging opportunities.
 
 ---
 
