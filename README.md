@@ -22,6 +22,11 @@
     - Console application for testing and running Discord bots
     - Uses dependency injection to manage bot configurations
     - Loads settings from config.json for multiple Discord bot instances
+  4. The16Oracles.domain.nunit
+    - NUnit test project for domain layer testing
+    - Built with .NET 9.0 and NUnit 4.2.2
+    - Includes code coverage collection via coverlet
+    - Ensures reliability and quality of domain logic and services
 
   Additional Features
 
