@@ -1,7 +1,7 @@
 # The 16 Oracles: A Decentralized Autonomous Oracle Application
 
 **Version 1.0**
-**© 2025 Jerrame Hertz. All Rights Reserved.**
+**ï¿½ 2025 Jerrame Hertz. All Rights Reserved.**
 
 ---
 
@@ -82,7 +82,7 @@ Each oracle operates independently yet contributes to a holistic view of the cry
 ### 4.2 Data Flow
 
 ```
-Data Sources ’ Ingestion Layer ’ Oracle Processing ’ Analysis Engine ’ API Endpoints ’ Consumers
+Data Sources ï¿½ Ingestion Layer ï¿½ Oracle Processing ï¿½ Analysis Engine ï¿½ API Endpoints ï¿½ Consumers
 ```
 
 1. **Data Sources**: Blockchain nodes, exchanges, social media, news feeds, on-chain analytics
@@ -437,7 +437,7 @@ Through open API access, robust testing, and community-driven development, The 1
 
 ## Contact & Contributions
 
-**Copyright**: © 2025 Jerrame Hertz. All Rights Reserved.
+**Copyright**: ï¿½ 2025 Jerrame Hertz. All Rights Reserved.
 
 For questions, contributions, or partnership inquiries, please refer to the project repository.
 
