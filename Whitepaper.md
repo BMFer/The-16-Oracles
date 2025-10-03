@@ -1,7 +1,7 @@
 # The 16 Oracles: A Decentralized Autonomous Oracle Application
 
 **Version 1.0**
-**� 2025 Jerrame Hertz. All Rights Reserved.**
+**© 2025 Jerrame Hertz. All Rights Reserved.**
 
 ---
 
