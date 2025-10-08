@@ -22,14 +22,18 @@
     - Console application for testing and running Discord bots
     - Uses dependency injection to manage bot configurations
     - Loads settings from config.json for multiple Discord bot instances
-  4. The16Oracles.www (ASP.NET Core MVC Web Application)
-    - Web frontend application built with ASP.NET Core 8.0 MVC pattern
-    - Provides user-facing web interface for The 16 Oracles platform
-    - Features Bootstrap 5 for responsive design and modern UI components
-    - Includes jQuery and validation libraries for enhanced client-side interactions
-    - Standard MVC architecture with Controllers, Views, and Models
-    - Configured with HTTPS redirection and static file serving
-  5. The16Oracles.domain.nunit
+  4. The16Oracles.www.Server (ASP.NET Core 8.0 Backend)
+    - Backend API server for the web application
+    - Built with ASP.NET Core 8.0 with SPA proxy support
+    - Integrates with Angular client application
+    - Includes Swashbuckle for API documentation
+  5. the16oracles.www.client (Angular 17 Frontend)
+    - Modern Angular 17 single-page application
+    - Client-side web interface for The 16 Oracles platform
+    - Features TypeScript, RxJS, and Jasmine testing framework
+    - Integrated with ASP.NET Core backend via SPA proxy
+    - Configured with HTTPS and cross-platform development support
+  6. The16Oracles.domain.nunit
     - NUnit test project for domain layer testing
     - Built with .NET 9.0 and NUnit 4.2.2
     - Includes code coverage collection via coverlet
