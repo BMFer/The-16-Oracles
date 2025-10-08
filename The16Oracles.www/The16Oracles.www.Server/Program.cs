@@ -1,6 +1,21 @@
+using The16Oracles.www.Server.Models;
+using The16Oracles.www.Server.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Configure Trading Bot
+builder.Services.Configure<TradeBotConfiguration>(
+    builder.Configuration.GetSection("TradeBot"));
+
+// Register HttpClient for Jupiter API
+builder.Services.AddHttpClient<IJupiterApiService, JupiterApiService>();
+
+// Register Trading Bot Services
+builder.Services.AddSingleton<IRiskManagementService, RiskManagementService>();
+builder.Services.AddSingleton<ISolanaTransactionService, SolanaTransactionService>();
+builder.Services.AddSingleton<ITradingBotService, TradingBotService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
