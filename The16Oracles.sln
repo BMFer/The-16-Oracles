@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "The16Oracles.DAOA", "The16O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "The16Oracles.domain.nunit", "The16Oracles.domain.nunit\The16Oracles.domain.nunit.csproj", "{E9ADF170-E033-A2FF-BC85-B880DBB209E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "The16Oracles.www", "The16Oracles.www\The16Oracles.www.csproj", "{20FD1EBD-486D-4A49-B54D-4F5D9E338260}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{E9ADF170-E033-A2FF-BC85-B880DBB209E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9ADF170-E033-A2FF-BC85-B880DBB209E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9ADF170-E033-A2FF-BC85-B880DBB209E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20FD1EBD-486D-4A49-B54D-4F5D9E338260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20FD1EBD-486D-4A49-B54D-4F5D9E338260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20FD1EBD-486D-4A49-B54D-4F5D9E338260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20FD1EBD-486D-4A49-B54D-4F5D9E338260}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
