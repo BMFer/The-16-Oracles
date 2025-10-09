@@ -13,10 +13,10 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
       <Version>8.*-*</Version>
     </PackageReference>
+    <PackageReference Include="Solnet.Programs" Version="6.1.0" />
+    <PackageReference Include="Solnet.Rpc" Version="6.1.0" />
+    <PackageReference Include="Solnet.Wallet" Version="6.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-    <PackageReference Include="Solnet.Wallet" Version="6.8.0" />
-    <PackageReference Include="Solnet.Rpc" Version="6.8.0" />
-    <PackageReference Include="Solnet.Programs" Version="6.8.0" />
   </ItemGroup>
 
   <ItemGroup>
