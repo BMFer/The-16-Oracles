@@ -100,6 +100,7 @@ Set `TradeBot:Trading:Enabled` to `true` when ready to trade live.
 ### 1. Install Dependencies
 
 The required NuGet packages are already added:
+
 - Solnet.Wallet (v6.8.0)
 - Solnet.Rpc (v6.8.0)
 - Solnet.Programs (v6.8.0)
@@ -121,6 +122,7 @@ dotnet user-secrets set "TradeBot:Trading:Enabled" "true"
 ### 3. Fund Your Wallet
 
 Ensure your bot wallet has:
+
 - Sufficient SOL for transactions (gas fees + trading)
 - Tokens if you plan to sell tokens for SOL
 
@@ -141,6 +143,7 @@ curl -X GET https://localhost:5001/api/TradingBot/status
 ```
 
 Response:
+
 ```json
 {
   "isRunning": true,
@@ -165,6 +168,7 @@ curl -X POST https://localhost:5001/api/TradingBot/trade \
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -199,6 +203,7 @@ Daily counters automatically reset at UTC midnight.
 ### Logs
 
 The bot logs all operations:
+
 - Trade executions
 - Risk check violations
 - Balance queries
@@ -243,9 +248,9 @@ Reduce trade size or wait for better market liquidity.
 ## Production Recommendations
 
 1. **Use Premium RPC**: Mainnet-beta public RPC has rate limits
-   - Helius: https://helius.xyz
-   - QuickNode: https://quicknode.com
-   - Triton: https://triton.one
+   - Helius: <https://helius.xyz>
+   - QuickNode: <https://quicknode.com>
+   - Triton: <https://triton.one>
 
 2. **Implement Additional Monitoring**:
    - Application Performance Monitoring (APM)
