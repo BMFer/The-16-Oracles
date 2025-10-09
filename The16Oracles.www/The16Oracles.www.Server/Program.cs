@@ -16,6 +16,8 @@ builder.Services.AddHttpClient<IJupiterApiService, JupiterApiService>();
 builder.Services.AddSingleton<IRiskManagementService, RiskManagementService>();
 builder.Services.AddSingleton<ISolanaTransactionService, SolanaTransactionService>();
 builder.Services.AddSingleton<ITradingBotService, TradingBotService>();
+builder.Services.AddSingleton<IProfitabilityAnalyzer, ProfitabilityAnalyzer>();
+builder.Services.AddSingleton<ITradingBotOrchestrator, TradingBotOrchestrator>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

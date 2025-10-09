@@ -5,6 +5,7 @@ public class TradeBotConfiguration
     public SolanaConfiguration Solana { get; set; } = new();
     public RiskManagementConfiguration RiskManagement { get; set; } = new();
     public TradingConfiguration Trading { get; set; } = new();
+    public List<TradingPairConfiguration> TradingPairs { get; set; } = new();
 }
 
 public class SolanaConfiguration
