@@ -336,109 +336,224 @@ Core domain models include:
 
 ---
 
-## 7. Community Integration
+## 7. Automated Trading Integration
 
-### 7.1 Discord Bot Integration
+### 7.1 Multi-Stablecoin Cascade Trading System
 
-The 16 Oracles includes AI-powered Discord bot functionality that brings oracle insights directly to community channels:
+The 16 Oracles includes an advanced automated trading system that leverages oracle insights for intelligent trade execution on Solana:
+
+**Architecture**:
+
+- **Multi-Pair Configuration**: Support for multiple stablecoin trading pairs (USDC, USDT, DAI, etc.)
+- **Profitability Ranking**: Dynamic ranking system determines optimal execution order
+- **Cascade Execution**: Sequential trading where results from the best-performing bot feed into the next
+- **Jupiter Aggregator Integration**: Utilizes Jupiter v6 for optimal swap routes and best prices
+- **Independent Risk Management**: Each trading pair has configurable risk parameters and limits
+
+**Key Features**:
+
+- Per-trade notional limits to control individual position sizes
+- Daily volume limits to prevent overexposure
+- Price impact validation (rejects trades >1% impact by default)
+- Minimum balance protection to maintain operational liquidity
+- Slippage tolerance configuration (default 0.3%)
+- Real-time balance monitoring for SOL and all configured tokens
+
+**Trading Pair Configuration**:
+
+Each trading pair includes:
+- Unique identifier (e.g., "usdc-sol", "usdt-bonk")
+- Stablecoin mint address
+- Target token mint address
+- Profitability rank (1 = highest priority)
+- Enable/disable toggle
+- Independent risk management settings
+- Dynamic profitability score based on liquidity and price impact
+
+**Cascade Strategy Execution**:
+
+1. Profitability Analyzer calculates real-time scores for all enabled pairs
+2. Pairs are sorted by profitability rank
+3. Highest-ranked pair executes first trade
+4. Successful trade output feeds as input to next-ranked pair
+5. Process continues through cascade depth or until failure (configurable)
+6. Final profit/loss calculated across entire cascade
+
+**API Endpoints**:
+
+- `GET /api/TradingBot/pairs` - List all configured trading pairs with status
+- `POST /api/TradingBot/pairs` - Add new trading pair configuration
+- `PUT /api/TradingBot/pairs/{id}/ranking` - Update profitability rank
+- `PUT /api/TradingBot/pairs/{id}/enabled` - Enable/disable specific pair
+- `POST /api/TradingBot/execute-cascade` - Execute cascade trading strategy
+- `GET /api/TradingBot/status` - Bot status, balances, and daily volume
+
+**Security & Risk Controls**:
+
+- Private keys managed via user secrets / environment variables (never in code)
+- Configurable maximum trade sizes per pair
+- Daily volume caps with automatic UTC midnight reset
+- Price impact checks prevent high-slippage trades
+- Transaction confirmation with retry logic
+- Comprehensive logging of all trade activity
+
+### 7.2 Oracle-Driven Trading Intelligence
+
+The automated trading system integrates with The 16 Oracles to leverage market intelligence:
+
+- **Stablecoin Flow Analysis (Oracle 16)**: Informs stablecoin pair selection and timing
+- **DeFi Liquidity Flows (Oracle 2)**: Identifies optimal liquidity conditions for trades
+- **Whale Wallet Activity (Oracle 3)**: Monitors large holder behavior for trend signals
+- **Regulatory Risk Monitor (Oracle 7)**: Alerts to compliance risks affecting stablecoin trades
+- **Emerging Market Surge Detector (Oracle 9)**: Identifies early opportunities for cascade targets
+
+## 8. Community Integration
+
+### 8.1 Discord Bot Integration
+
+The 16 Oracles includes AI-powered Discord bot functionality that brings oracle insights and trading alerts directly to community channels:
 
 **Features**:
 
 - Automated oracle alert notifications
+- Real-time trading bot status and performance updates
 - AI-powered welcome messages using OpenAI integration
 - NFT showcase capabilities
 - War game mechanics for community engagement
-- Custom command framework for oracle queries
+- Custom command framework for oracle queries and trade monitoring
 
-### 7.2 Community Engagement
+### 8.2 Community Engagement
 
 - Real-time oracle alerts in Discord servers
+- Automated trading performance notifications
 - Community-driven oracle calibration feedback
-- Educational content explaining oracle insights
+- Educational content explaining oracle insights and trading strategies
 - Collaborative analysis and discussion forums
 
 ---
 
-## 8. Use Cases
+## 9. Use Cases
 
-### 8.1 Individual Traders & Investors
+### 9.1 Individual Traders & Investors
 
 - Monitor whale activity before making investment decisions
 - Track emerging narratives for early-stage opportunities
 - Assess rug pull risks before entering new projects
 - Stay informed on regulatory developments
+- **Utilize cascade trading bot for automated stablecoin optimization**
+- **Configure custom trading pairs based on oracle insights**
 
-### 8.2 DeFi Protocol Operators
+### 9.2 DeFi Protocol Operators
 
 - Monitor competitive liquidity flows
 - Track tokenomics innovations in the market
 - Assess cross-chain bridge usage patterns
 - Optimize yield strategies based on market trends
+- **Automate treasury management with multi-stablecoin trading**
+- **Leverage profitability rankings for capital efficiency**
 
-### 8.3 NFT Communities
+### 9.3 NFT Communities
 
 - Track floor price trends and sentiment
 - Identify emerging NFT opportunities
 - Monitor whale accumulation in collections
 - Gauge overall NFT market health
+- **Receive Discord notifications for trading bot performance**
 
-### 8.4 Blockchain Developers
+### 9.4 Blockchain Developers
 
 - Monitor L2 adoption trends for deployment decisions
 - Track technology adoption curves
 - Assess validator economics for network design
 - Identify interoperability patterns
+- **Integrate trading bot API into custom applications**
+- **Build on cascade trading framework for specialized strategies**
 
-### 8.5 Institutional Investors
+### 9.5 Institutional Investors
 
 - Comprehensive risk assessment across portfolio
 - Regulatory compliance monitoring
 - Market trend analysis for strategic allocation
 - Black swan event preparedness
+- **Automated stablecoin position management with risk controls**
+- **Multi-pair cascade execution for capital efficiency**
+
+### 9.6 Automated Trading Strategies
+
+- **Stablecoin Yield Optimization**: Cascade through multiple pairs to capture arbitrage opportunities
+- **Market-Making Automation**: Dynamic pair ranking based on liquidity conditions
+- **Treasury Management**: Automated rebalancing across stablecoin holdings
+- **Risk-Controlled Speculation**: Configurable limits prevent overexposure
+- **Multi-Chain Opportunity Capture**: Execute on Solana with plan to expand to other chains
 
 ---
 
-## 9. Security & Reliability
+## 10. Security & Reliability
 
-### 9.1 Data Integrity
+### 10.1 Data Integrity
 
 - Multi-source data validation
 - Anomaly detection for data quality
 - Cryptographic verification where applicable
 - Source reputation scoring
 
-### 9.2 API Security
+### 10.2 API Security
 
 - Rate limiting to prevent abuse
 - API key management system
 - Input validation and sanitization
 - HTTPS/TLS encryption
 
-### 9.3 Testing & Quality Assurance
+### 10.3 Trading Bot Security
 
-- Comprehensive unit test coverage
+- **Private Key Management**: User secrets and environment variables only (never committed to code)
+- **Transaction Signing**: Secure wallet operations with Solana SDK
+- **Risk Limits**: Multiple layers of protection (per-trade, daily, price impact)
+- **Balance Verification**: Pre-trade balance checks prevent overdrafts
+- **Audit Logging**: Comprehensive logging of all trade activity and decisions
+- **Configuration Validation**: Startup checks ensure valid settings before trading
+
+### 10.4 Testing & Quality Assurance
+
+- Comprehensive unit test coverage (40+ tests for trading bot alone)
+- Mock-based testing for external dependencies (Jupiter API, Solana RPC)
 - Integration testing for data pipelines
 - Performance testing for scalability
 - Continuous integration/deployment pipelines
+- **Trading Bot Test Coverage**:
+  - Controller endpoint testing (16 tests)
+  - Orchestrator logic testing (15 tests)
+  - Profitability analyzer testing (13 tests)
+  - Edge case and error handling validation
 
-### 9.4 Reliability
+### 10.5 Reliability
 
 - Graceful degradation when data sources fail
 - Redundant data source configurations
 - Health monitoring and alerting
 - Automated failover mechanisms
+- **Trading Reliability**:
+  - Retry logic for failed transactions
+  - Partial cascade failure handling
+  - Daily volume reset automation
+  - Real-time profitability score updates
 
 ---
 
-## 10. Roadmap
+## 11. Roadmap
 
-### Phase 1: Foundation (Current)
+### Phase 1: Foundation (Completed)
 
-- Core oracle infrastructure
-- API endpoint implementation
-- Discord bot integration
-- Initial testing framework
-- Web application with Angular 17 frontend and ASP.NET Core 8.0 backend
+- ✅ Core oracle infrastructure
+- ✅ API endpoint implementation
+- ✅ Discord bot integration
+- ✅ Initial testing framework
+- ✅ Web application with Angular 17 frontend and ASP.NET Core 8.0 backend
+- ✅ **Multi-stablecoin cascade trading bot on Solana**
+- ✅ **Jupiter Aggregator v6 integration**
+- ✅ **Comprehensive trading bot test suite (40+ tests)**
+- ✅ **Profitability ranking and analysis system**
+- ✅ **Risk management framework with configurable limits**
 
 ### Phase 2: Data Integration
 
@@ -454,6 +569,10 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - Custom alert configuration
 - Advanced visualization tools in Angular web interface
 - Interactive oracle data dashboards
+- **Oracle-driven trading signal generation**
+- **Automated cascade optimization based on market conditions**
+- **Historical trading performance analytics**
+- **Multi-timeframe profitability analysis**
 
 ### Phase 4: Ecosystem Expansion
 
@@ -461,6 +580,10 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - Developer portal and documentation
 - Partner integrations
 - Community oracle contributions
+- **Multi-chain trading bot expansion (Ethereum, Polygon, Arbitrum, etc.)**
+- **Cross-chain arbitrage strategies**
+- **Trading bot marketplace for custom strategies**
+- **Premium RPC provider integrations (Helius, QuickNode)**
 
 ### Phase 5: Decentralization
 
@@ -473,13 +596,15 @@ For detailed roadmap information, see [Roadmap.md](Roadmap.md).
 
 ---
 
-## 11. Conclusion
+## 12. Conclusion
 
-The 16 Oracles represents a paradigm shift in crypto market intelligence, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence and clarity.
+The 16 Oracles represents a paradigm shift in crypto market intelligence and automated trading, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with intelligent automated trading capabilities and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence and clarity.
 
-The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types and analytical capabilities as the market demands.
+The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (40+ unit tests) guarantees reliability.
 
-Through open API access, robust testing, and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, serving traders, developers, investors, and communities worldwide.
+The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, trading strategies, and analytical capabilities as the market demands.
+
+Through open API access, robust testing, secure trading infrastructure, and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence and automated trading execution, serving traders, developers, investors, and communities worldwide.
 
 ---
 

@@ -198,7 +198,8 @@ public class SolanaTransactionService : ISolanaTransactionService
 
             try
             {
-                var statusResult = await _rpcClient.GetSignatureStatusesAsync(new List<string>() { signature }, true);
+                List<string> transactionHashes = [signature];
+                var statusResult = await _rpcClient.GetSignatureStatusesAsync(transactionHashes, true);
                 if (statusResult.WasSuccessful && statusResult.Result?.Value != null)
                 {
                     var status = statusResult.Result.Value[0];
