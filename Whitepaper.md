@@ -292,21 +292,25 @@ Tracks stablecoin minting, redemption, and movement patterns as market sentiment
 
 ### 6.1 Technology Stack
 
-**Backend Framework**: ASP.NET Core 9.0
+**Backend Framework**: ASP.NET Core 8.0/9.0
+**Frontend Framework**: Angular 17
 **API Design**: RESTful with minimal APIs
 **Documentation**: OpenAPI/Swagger
 **Domain Architecture**: Clean architecture with separated domain layer
-**Testing**: NUnit framework with code coverage
-**Runtime**: .NET 9.0 with latest C# language features
+**Testing**: NUnit framework with code coverage, Jasmine for frontend
+**Runtime**: .NET 8.0/9.0 with latest C# language features
+**SPA Integration**: ASP.NET Core SPA proxy for Angular development
 
 ### 6.2 Project Structure
 
 ``` markdown
 The16Oracles.sln
-* The16Oracles.DAOA          # Web API exposing oracle endpoints
-* The16Oracles.domain        # Shared domain models and services
-* The16Oracles.console       # Console application for testing
-* The16Oracles.domain.nunit  # Unit tests for domain layer
+* The16Oracles.DAOA              # Web API exposing oracle endpoints
+* The16Oracles.domain            # Shared domain models and services
+* The16Oracles.console           # Console application for testing
+* The16Oracles.www.Server        # ASP.NET Core 8.0 backend for web app
+* the16oracles.www.client        # Angular 17 frontend SPA
+* The16Oracles.domain.nunit      # Unit tests for domain layer
 ```
 
 ### 6.3 API Design
@@ -434,6 +438,7 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - API endpoint implementation
 - Discord bot integration
 - Initial testing framework
+- Web application with Angular 17 frontend and ASP.NET Core 8.0 backend
 
 ### Phase 2: Data Integration
 
@@ -447,7 +452,8 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - Machine learning model integration
 - Predictive analytics capabilities
 - Custom alert configuration
-- Advanced visualization tools
+- Advanced visualization tools in Angular web interface
+- Interactive oracle data dashboards
 
 ### Phase 4: Ecosystem Expansion
 

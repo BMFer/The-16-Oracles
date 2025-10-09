@@ -1,0 +1,6 @@
+@The16Oracles.www.Server_HostAddress = http://localhost:5142
+
+GET {{The16Oracles.www.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

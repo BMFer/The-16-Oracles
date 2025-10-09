@@ -76,3 +76,6 @@ _ReSharper*/
 /.vs/The16Oracles/DesignTimeBuild/.dtbcache.v2
 /The16Oracles.console/obj/Debug/net8.0/The16Oracles.console.AssemblyInfo.cs
 /The16Oracles.console/obj/Debug/net8.0/The16Oracles.console.AssemblyInfoInputs.cache
+
+# Node
+node_modules/
