@@ -198,15 +198,15 @@ public class SolanaTransactionService : ISolanaTransactionService
 
             try
             {
-                var statusResult = await _rpcClient.GetSignatureStatusesAsync(new[] { signature }, true);
+                var statusResult = await _rpcClient.GetSignatureStatusesAsync(new List<string>() { signature }, true);
                 if (statusResult.WasSuccessful && statusResult.Result?.Value != null)
                 {
                     var status = statusResult.Result.Value[0];
                     if (status?.ConfirmationStatus == "confirmed" || status?.ConfirmationStatus == "finalized")
                     {
-                        if (status.Err != null)
+                        if (status.Error != null)
                         {
-                            _logger.LogError("Transaction failed with error: {Error}", status.Err);
+                            _logger.LogError("Transaction failed with error: {Error}", status.Error);
                             return false;
                         }
                         return true;
