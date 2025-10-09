@@ -27,6 +27,11 @@
     - Built with .NET 9.0 and NUnit 4.2.2
     - Includes code coverage collection via coverlet
     - Ensures reliability and quality of domain logic and services
+  5. The16Oracles.DAOA.nunit
+    - NUnit test project for DAOA Web API testing
+    - Built with .NET 9.0 and NUnit 4.2.2
+    - Tests oracle implementations and API endpoints
+    - Includes code coverage collection via coverlet
 
   Additional Features
 
