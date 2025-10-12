@@ -14,6 +14,17 @@
       - Opportunities: Airdrop launches, emerging market surges
       - Technical Metrics: L2 activity, chain interoperability, node validator profits
       - Trends: AI narratives, tokenomics, tech adoption curves, stablecoin flows
+    - **Solana CLI Web API Wrapper**:
+      - 25+ RESTful endpoints wrapping Solana CLI commands
+      - Account & balance management (balance, address, transfer)
+      - Airdrop and faucet operations
+      - Transaction management and confirmation
+      - Block, slot, and epoch information
+      - Cluster information (version, supply, inflation, validators)
+      - Stake and vote account management
+      - Support for all Solana networks (mainnet, devnet, testnet, localhost)
+      - Generic command execution for advanced usage
+      - Documented in SolanaAPI.md
     - Built with .NET minimal APIs and Swagger/OpenAPI documentation
   2. The16Oracles.domain
     - Domain layer containing shared models, services, and business logic
@@ -65,9 +76,10 @@
   Additional Features
 
 - **Automated Trading**: Multi-stablecoin cascade trading bot on Solana with Jupiter Aggregator integration (documented in The16Oracles.www.Server/TRADEBOT_README.md)
+- **Solana CLI Web API**: RESTful wrapper for Solana blockchain operations with 25+ endpoints covering all major CLI commands (documented in SolanaAPI.md)
 - **Discord Bot Integration**: AI-powered NFT community bot with OpenAI integration for welcome messages, NFT showcases, and war game mechanics (documented in DiscordBot.md)
-- **Architecture**: Clean separation with domain logic, console runner, web API layers, and automated trading services
-- **Testing**: Comprehensive unit test coverage across all projects with 40+ trading bot tests
+- **Architecture**: Clean separation with domain logic, console runner, web API layers, automated trading services, and blockchain integration
+- **Testing**: Comprehensive unit test coverage across all projects with 105+ total tests (24 domain, 42 DAOA, 39 trading bot)
 - **Copyright**: © 2025 Jerrame Hertz, All Rights Reserved
 
-  This is a comprehensive crypto analytics, automated trading, and community engagement platform combining oracle data feeds, intelligent trading bots, and Discord community features.
+  This is a comprehensive crypto analytics, automated trading, blockchain operations, and community engagement platform combining oracle data feeds, Solana CLI integration, intelligent trading bots, and Discord community features.

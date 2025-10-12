@@ -46,10 +46,14 @@ dotnet test --filter "FullyQualifiedName~The16Oracles.domain.nunit.Models.Config
 ### Solution Structure
 This is a multi-project .NET solution with clean architecture:
 
-- **The16Oracles.DAOA** - ASP.NET Core Web API exposing 16 crypto oracle endpoints
+- **The16Oracles.DAOA** - ASP.NET Core Web API exposing 16 crypto oracle endpoints + Solana CLI wrapper
 - **The16Oracles.domain** - Shared domain layer with models and services (Discord bot functionality)
 - **The16Oracles.console** - Console application for running Discord bots (uses dependency injection)
 - **The16Oracles.domain.nunit** - NUnit test project for domain layer
+- **The16Oracles.DAOA.nunit** - NUnit test project for DAOA Web API
+- **The16Oracles.www.Server** - ASP.NET Core backend with Solana trading bot system
+- **The16Oracles.www.Server.nunit** - NUnit test project for trading bot system
+- **the16oracles.www.client** - Angular 17 frontend application
 
 ### Target Frameworks
 - DAOA, domain, console: **.NET 8.0**
@@ -83,6 +87,41 @@ Each oracle is responsible for:
 - **Opportunities**: AirdropLaunchOpportunities, EmergingMarketCapitalSurge
 - **Technical Metrics**: L2ActivityMonitoring, ChainInteroperabilityMetrics, NodeValidatorProfits
 - **Trends**: AiNarrativeTrendDetection, TokenomicsSupplyCurves, TechAdoptionCurves, StablecoinFlowTracking
+
+### Solana CLI API Wrapper (DAOA Project)
+
+The DAOA also includes a RESTful wrapper for Solana CLI commands:
+
+**Service Pattern** (see `The16Oracles.DAOA/Services/SolanaService.cs`):
+1. Register service: `builder.Services.AddSingleton<ISolanaService, SolanaService>();`
+2. Create minimal API endpoints for each Solana command
+3. Execute CLI commands via Process and return standardized responses
+
+**Key Features**:
+- 25+ endpoints covering all major Solana CLI operations
+- Support for all networks (mainnet-beta, devnet, testnet, localhost)
+- Standardized request/response models with global flags support
+- Process execution with output/error handling
+- JSON parsing for structured data responses
+
+**Endpoint Categories**:
+- Account & Balance Management (balance, address, transfer)
+- Airdrop & Faucet operations
+- Transaction management (history, confirmation, count)
+- Block & Slot information
+- Epoch information
+- Cluster information (version, supply, inflation, validators)
+- Stake account management
+- Vote account management
+- Generic command execution endpoint
+
+**Solana Endpoints**: All under `/api/solana/` with tag "Solana CLI":
+- `/api/solana/balance` - Get account balance
+- `/api/solana/transfer` - Transfer SOL
+- `/api/solana/airdrop` - Request airdrop
+- `/api/solana/epoch-info` - Get epoch information
+- `/api/solana/validators` - Get validator information
+- etc. (See `SolanaAPI.md` for complete documentation)
 
 ### Discord Bot Architecture (Console + Domain)
 
@@ -157,6 +196,12 @@ All oracle endpoints are under `/api/oracles/` with kebab-case naming:
 - `/api/oracles/nft-sentiment`
 - etc.
 
+### Solana API Endpoints
+All Solana CLI wrapper endpoints are under `/api/solana/`:
+- GET endpoints for simple queries (e.g., `/api/solana/cluster-version?url=devnet`)
+- POST endpoints for operations requiring parameters (e.g., `/api/solana/balance`, `/api/solana/transfer`)
+- Generic execution endpoint: `/api/solana/execute` for advanced custom commands
+
 ### DataBundle Pattern
 Most oracles currently accept an empty `DataBundle` object. This is designed for future expansion where oracles might receive contextual data or parameters.
 
@@ -195,4 +240,12 @@ Each oracle operates independently - they don't share state or communicate with 
 Both the DAOA API (via appsettings.json) and Discord bots (via config.json) are configuration-driven. No hardcoded tokens or API keys should be committed to the repository.
 
 ### External Dependencies
-Most oracles require real-time external API access. If APIs are unavailable or rate-limited, oracles will throw exceptions that need to be handled by the calling code.
+- Most oracles require real-time external API access. If APIs are unavailable or rate-limited, oracles will throw exceptions that need to be handled by the calling code.
+- The Solana CLI wrapper requires **Solana CLI to be installed** on the server where DAOA runs. Install from: https://docs.solana.com/cli/install-solana-cli-tools
+
+## Related Documentation
+
+- **SolanaAPI.md** - Complete documentation for the Solana CLI Web API wrapper with request/response examples
+- **DiscordBot.md** - Comprehensive guide for Discord bot setup, commands, and customization
+- **TRADEBOT_README.md** - Documentation for the Solana trading bot system (in The16Oracles.www.Server/)
+- **README.md** - Project overview and solution structure
