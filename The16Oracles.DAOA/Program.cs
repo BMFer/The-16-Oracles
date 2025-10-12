@@ -1,6 +1,8 @@
 using The16Oracles.DAOA.Interfaces;
 using The16Oracles.DAOA.Models;
+using The16Oracles.DAOA.Models.Solana;
 using The16Oracles.DAOA.Oracles;
+using The16Oracles.DAOA.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +65,9 @@ builder.Services.AddSingleton<IAIOracle, StablecoinFlowTrackingOracle>();
 
 builder.Services.AddHttpClient<TechAdoptionCurvesOracle>();
 builder.Services.AddSingleton<IAIOracle, TechAdoptionCurvesOracle>();
+
+// Register Solana service
+builder.Services.AddSingleton<ISolanaService, SolanaService>();
 
 var app = builder.Build();
 
@@ -211,6 +216,260 @@ app.MapGet("/api/oracles/crypto-whale-behavior", async (CryptoWhaleBehaviorOracl
 .WithName("GetCrypto-whale-behavior")
 .WithTags("DAOA Oracles")
 .WithOpenApi();
+
+#region Solana API Endpoints
+
+// Account & Balance Management
+app.MapPost("/api/solana/balance", async (ISolanaService solanaService, BalanceRequest request) =>
+{
+    var result = await solanaService.GetBalanceAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetSolanaBalance")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/address", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new SolanaCommandRequest
+    {
+        Command = "address",
+        Flags = flags
+    };
+    var result = await solanaService.ExecuteCommandAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetSolanaAddress")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapPost("/api/solana/transfer", async (ISolanaService solanaService, TransferRequest request) =>
+{
+    var result = await solanaService.TransferAsync(request);
+    return Results.Ok(result);
+})
+.WithName("TransferSol")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Airdrop
+app.MapPost("/api/solana/airdrop", async (ISolanaService solanaService, AirdropRequest request) =>
+{
+    var result = await solanaService.AirdropAsync(request);
+    return Results.Ok(result);
+})
+.WithName("RequestAirdrop")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Account Information
+app.MapPost("/api/solana/account", async (ISolanaService solanaService, AccountRequest request) =>
+{
+    var result = await solanaService.GetAccountAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetSolanaAccount")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Transaction Management
+app.MapPost("/api/solana/transaction-history", async (ISolanaService solanaService, TransactionHistoryRequest request) =>
+{
+    var result = await solanaService.GetTransactionHistoryAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetTransactionHistory")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapPost("/api/solana/confirm", async (ISolanaService solanaService, ConfirmRequest request) =>
+{
+    var result = await solanaService.ConfirmTransactionAsync(request);
+    return Results.Ok(result);
+})
+.WithName("ConfirmTransaction")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/transaction-count", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var result = await solanaService.GetTransactionCountAsync(flags);
+    return Results.Ok(result);
+})
+.WithName("GetTransactionCount")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/prioritization-fees", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new PrioritizationFeesRequest { Flags = flags };
+    var result = await solanaService.GetPrioritizationFeesAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetPrioritizationFees")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Block & Slot Information
+app.MapPost("/api/solana/block", async (ISolanaService solanaService, BlockRequest request) =>
+{
+    var result = await solanaService.GetBlockAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetBlock")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/block-height", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var result = await solanaService.GetBlockHeightAsync(flags);
+    return Results.Ok(result);
+})
+.WithName("GetBlockHeight")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/slot", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var result = await solanaService.GetSlotAsync(flags);
+    return Results.Ok(result);
+})
+.WithName("GetSlot")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Epoch Information
+app.MapGet("/api/solana/epoch-info", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new EpochInfoRequest { Flags = flags };
+    var result = await solanaService.GetEpochInfoAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetEpochInfo")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Cluster Information
+app.MapGet("/api/solana/cluster-version", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var result = await solanaService.GetClusterVersionAsync(flags);
+    return Results.Ok(result);
+})
+.WithName("GetClusterVersion")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/genesis-hash", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var result = await solanaService.GetGenesisHashAsync(flags);
+    return Results.Ok(result);
+})
+.WithName("GetGenesisHash")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/supply", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new SupplyRequest { Flags = flags };
+    var result = await solanaService.GetSupplyAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetSupply")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/inflation", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new InflationRequest { Flags = flags };
+    var result = await solanaService.GetInflationAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetInflation")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapGet("/api/solana/largest-accounts", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url, [Microsoft.AspNetCore.Mvc.FromQuery] int? limit) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new LargestAccountsRequest { Flags = flags, Limit = limit };
+    var result = await solanaService.GetLargestAccountsAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetLargestAccounts")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Validator Information
+app.MapGet("/api/solana/validators", async (ISolanaService solanaService, [Microsoft.AspNetCore.Mvc.FromQuery] string? url) =>
+{
+    var flags = new SolanaGlobalFlags { Url = url };
+    var request = new ValidatorsRequest { Flags = flags };
+    var result = await solanaService.GetValidatorsAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetValidators")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Stake Account Management
+app.MapPost("/api/solana/stake-account", async (ISolanaService solanaService, StakeAccountRequest request) =>
+{
+    var result = await solanaService.GetStakeAccountAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetStakeAccount")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapPost("/api/solana/create-stake-account", async (ISolanaService solanaService, CreateStakeAccountRequest request) =>
+{
+    var result = await solanaService.CreateStakeAccountAsync(request);
+    return Results.Ok(result);
+})
+.WithName("CreateStakeAccount")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+app.MapPost("/api/solana/delegate-stake", async (ISolanaService solanaService, DelegateStakeRequest request) =>
+{
+    var result = await solanaService.DelegateStakeAsync(request);
+    return Results.Ok(result);
+})
+.WithName("DelegateStake")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Vote Account Management
+app.MapPost("/api/solana/vote-account", async (ISolanaService solanaService, VoteAccountRequest request) =>
+{
+    var result = await solanaService.GetVoteAccountAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetVoteAccount")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+// Generic command endpoint for advanced usage
+app.MapPost("/api/solana/execute", async (ISolanaService solanaService, SolanaCommandRequest request) =>
+{
+    var result = await solanaService.ExecuteCommandAsync(request);
+    return Results.Ok(result);
+})
+.WithName("ExecuteSolanaCommand")
+.WithTags("Solana CLI")
+.WithOpenApi();
+
+#endregion
 
 #region OOB Example Code
 
