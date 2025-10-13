@@ -530,15 +530,24 @@ namespace The16Oracles.DAOA.Services
             {
                 _logger.LogInformation("Executing SPL Token CLI command: {Command}", command);
 
-                var processStartInfo = new ProcessStartInfo
+                var processStartInfo = new ProcessStartInfo();
+
+                // Detect OS and configure shell accordingly
+                if (OperatingSystem.IsWindows())
                 {
-                    FileName = "cmd.exe",
-                    Arguments = $"/c {command}",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = $"/c {command}";
+                }
+                else // Linux, macOS, and other Unix-like systems
+                {
+                    processStartInfo.FileName = "/bin/sh";
+                    processStartInfo.Arguments = $"-c \"{command.Replace("\"", "\\\"")}\"";
+                }
+
+                processStartInfo.RedirectStandardOutput = true;
+                processStartInfo.RedirectStandardError = true;
+                processStartInfo.UseShellExecute = false;
+                processStartInfo.CreateNoWindow = true;
 
                 using var process = new Process { StartInfo = processStartInfo };
                 process.Start();
