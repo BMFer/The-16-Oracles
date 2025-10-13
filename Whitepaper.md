@@ -307,13 +307,13 @@ Tracks stablecoin minting, redemption, and movement patterns as market sentiment
 
 ``` markdown
 The16Oracles.sln
-* The16Oracles.DAOA              # Web API exposing oracle endpoints + Solana CLI wrapper
+* The16Oracles.DAOA              # Web API exposing oracle endpoints + Solana/SPL Token CLI wrappers
 * The16Oracles.domain            # Shared domain models and services
 * The16Oracles.console           # Console application for Discord bots
 * The16Oracles.www.Server        # ASP.NET Core 8.0 backend with trading bot system
 * the16oracles.www.client        # Angular 17 frontend SPA
 * The16Oracles.domain.nunit      # Unit tests for domain layer (24 tests)
-* The16Oracles.DAOA.nunit        # Unit tests for DAOA Web API (42 tests)
+* The16Oracles.DAOA.nunit        # Unit tests for DAOA Web API (127 tests: 81 Solana, 46 SPL Token)
 * The16Oracles.www.Server.nunit  # Unit tests for trading bot (39 tests)
 ```
 
@@ -372,6 +372,45 @@ POST /api/solana/vote-account            # Get vote account info
 POST /api/solana/execute                 # Execute any Solana CLI command
 ```
 
+**SPL Token CLI Wrapper Endpoints** (23+ endpoints):
+``` markdown
+# Account Management
+POST /api/spl-token/accounts             # List all token accounts by owner
+POST /api/spl-token/address              # Get token account address
+POST /api/spl-token/balance              # Get token account balance
+POST /api/spl-token/create-account       # Create a new token account
+POST /api/spl-token/close                # Close a token account
+POST /api/spl-token/gc                   # Garbage collect empty accounts
+
+# Token Operations
+POST /api/spl-token/create-token         # Create a new token
+POST /api/spl-token/mint                 # Mint new tokens
+POST /api/spl-token/burn                 # Burn tokens from an account
+POST /api/spl-token/transfer             # Transfer tokens between accounts
+POST /api/spl-token/supply               # Get token supply
+POST /api/spl-token/close-mint           # Close a token mint
+
+# Token Delegation
+POST /api/spl-token/approve              # Approve a delegate
+POST /api/spl-token/revoke               # Revoke a delegate's authority
+
+# Token Authority
+POST /api/spl-token/authorize            # Authorize new signing keypair
+
+# Freeze/Thaw Operations
+POST /api/spl-token/freeze               # Freeze a token account
+POST /api/spl-token/thaw                 # Thaw a token account
+
+# Native SOL Wrapping
+POST /api/spl-token/wrap                 # Wrap native SOL
+POST /api/spl-token/unwrap               # Unwrap a SOL token account
+POST /api/spl-token/sync-native          # Sync native SOL account
+
+# Display & Utilities
+POST /api/spl-token/display              # Display token information
+POST /api/spl-token/execute              # Execute any SPL Token CLI command
+```
+
 ### 6.4 Data Models
 
 Core domain models include:
@@ -386,9 +425,18 @@ Core domain models include:
 
 ## 7. Solana Blockchain Integration
 
-### 7.1 Solana CLI Web API Wrapper
+### 7.1 Overview
 
-The 16 Oracles includes a comprehensive RESTful API wrapper for Solana blockchain operations, providing programmatic access to all major Solana CLI commands:
+The 16 Oracles provides comprehensive Solana blockchain integration through two complementary API wrappers:
+
+1. **Solana CLI Web API Wrapper** (25+ endpoints) - Core blockchain operations
+2. **SPL Token CLI Web API Wrapper** (23+ endpoints) - Token-specific operations
+
+Together, these APIs provide complete programmatic access to Solana blockchain and token functionality, enabling developers to build sophisticated blockchain applications without direct CLI access.
+
+### 7.2 Solana CLI Web API Wrapper
+
+The Solana CLI wrapper provides programmatic access to all major blockchain operations:
 
 **Architecture**:
 
@@ -452,6 +500,106 @@ The Solana CLI wrapper complements the oracle system by providing direct blockch
 - **Trading Bot Integration**: Access balance and transaction APIs for automated trading
 
 **Documentation**: Complete API reference available in `SolanaAPI.md` with curl examples and usage patterns.
+
+### 7.3 SPL Token CLI Web API Wrapper
+
+The SPL Token CLI wrapper extends blockchain integration with comprehensive token management capabilities:
+
+**Architecture**:
+
+- **Service-Based Design**: Clean separation with `ISplTokenService` interface and `SplTokenService` implementation
+- **Standardized Responses**: Consistent `SplTokenCommandResponse` format across all endpoints
+- **Token-2022 Support**: Full support for Token Extensions program with `--program-2022` flag
+- **Global Flags**: Support for all SPL Token CLI flags (output format, program ID, compute units, etc.)
+- **Generic Execution**: Advanced endpoint allows custom command execution for specialized operations
+
+**Key Features**:
+
+**Account Management**:
+- List token accounts by owner with filtering options (delegated, externally-closeable)
+- Query token account addresses (associated token accounts)
+- Check token balances for specific accounts or mint addresses
+- Create new token accounts (regular or immutable)
+- Close token accounts and reclaim rent
+- Garbage collection of empty accounts
+
+**Token Operations**:
+- Create new tokens with custom decimals and freeze capability
+- Mint tokens to specific accounts
+- Burn tokens from accounts
+- Transfer tokens between accounts with funding options
+- Query token supply
+- Close token mints
+
+**Token Delegation & Authority**:
+- Approve delegates for token accounts
+- Revoke delegate authority
+- Authorize new signing keypairs (mint, freeze, owner, close authorities)
+
+**Freeze/Thaw Operations**:
+- Freeze token accounts to prevent transfers
+- Thaw frozen accounts to restore functionality
+
+**Native SOL Wrapping**:
+- Wrap native SOL into SPL token format
+- Unwrap SOL token accounts back to native SOL
+- Sync native SOL account balances
+
+**Display & Information**:
+- Query detailed token mint, account, or multisig information
+- Support for all token metadata and extensions
+
+**Request/Response Pattern**:
+
+All endpoints return a standardized `SplTokenCommandResponse`:
+``` json
+{
+  "command": "spl-token balance EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v --url devnet",
+  "success": true,
+  "output": "1000.5",
+  "error": null,
+  "exitCode": 0,
+  "timestamp": "2025-10-13T10:30:00Z",
+  "data": null
+}
+```
+
+**Security Considerations**:
+
+- Token account keys managed through secure configuration
+- Input validation on all token operations
+- Process isolation for CLI execution
+- Support for read-only operations (balance, supply queries)
+- Write operations require explicit authority configuration
+- Support for multisig accounts
+
+**Use Cases**:
+
+- **Token Management Platforms**: Create and manage custom tokens programmatically
+- **DeFi Applications**: Integrate token operations (mint, burn, transfer) into smart contracts
+- **Wallet Services**: Provide token account creation and management APIs
+- **NFT Marketplaces**: Handle token transfers and account creation
+- **DAO Treasuries**: Automate token distribution and delegation
+- **Token Analytics**: Track token supplies, balances, and account activity
+- **Liquidity Management**: Automate wrapped SOL operations for liquidity pools
+
+**Integration with Oracle System**:
+
+The SPL Token wrapper complements the oracle system and trading bot:
+- **Oracle 2 (DeFi Liquidity Flows)**: Use token balance and supply endpoints for TVL tracking
+- **Oracle 16 (Stablecoin Flow Analysis)**: Monitor stablecoin token accounts and transfers
+- **Trading Bot Integration**: Access token balances and execute transfers for automated trading
+- **Oracle 4 (NFT Market Sentiment)**: Query NFT token account data and ownership
+
+**Testing & Quality Assurance**:
+
+- Comprehensive unit test coverage: 46 tests covering all operations
+- Tests validate command construction, flag handling, and response formatting
+- Mock-based testing for CLI execution
+- All service methods covered with multiple test scenarios
+- Global flags tested in combination with operations
+
+**Documentation**: Complete API reference available in `SPL-TOKEN-API.md` with request/response examples and usage patterns. Test documentation available in `SPL-TOKEN-TESTS.md`.
 
 ---
 
@@ -649,16 +797,26 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 
 ### 11.4 Testing & Quality Assurance
 
-- Comprehensive unit test coverage (105+ tests across solution)
-- Mock-based testing for external dependencies (Jupiter API, Solana RPC)
+- Comprehensive unit test coverage (206+ tests across solution)
+- Mock-based testing for external dependencies (Jupiter API, Solana RPC, CLI execution)
 - Integration testing for data pipelines
 - Performance testing for scalability
 - Continuous integration/deployment pipelines
 - **Test Coverage Breakdown**:
   - Domain layer tests: 24 tests
-  - DAOA oracle tests: 42 tests
+  - DAOA tests: 127 tests
+    - Solana CLI service: 81 tests (all commands, flags, and scenarios)
+    - SPL Token CLI service: 46 tests (all operations, delegation, wrapping)
+    - Oracle implementations: Additional oracle tests
   - Trading bot tests: 39 tests
-  - Total: 105+ comprehensive unit tests
+  - Additional model tests: 16+ tests
+  - Total: 206+ comprehensive unit tests
+- **Blockchain Integration Testing**:
+  - Command construction validation for Solana CLI
+  - Flag combination testing for SPL Token operations
+  - Response format verification
+  - Error handling for CLI execution failures
+  - Timestamp and metadata validation
 
 ### 11.5 Reliability
 
@@ -686,13 +844,16 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - ✅ Core oracle infrastructure with 16 specialized oracles
 - ✅ API endpoint implementation for all oracles
 - ✅ Discord bot integration with AI-powered features
-- ✅ Comprehensive testing framework (105+ tests)
+- ✅ Comprehensive testing framework (206+ tests)
 - ✅ Web application with Angular 17 frontend and ASP.NET Core 8.0 backend
 - ✅ **Solana CLI Web API wrapper (25+ endpoints)**
+- ✅ **SPL Token CLI Web API wrapper (23+ endpoints)**
 - ✅ **Multi-stablecoin cascade trading bot on Solana**
 - ✅ **Jupiter Aggregator v6 integration**
 - ✅ **Profitability ranking and analysis system**
 - ✅ **Risk management framework with configurable limits**
+- ✅ **Complete token management capabilities (create, mint, burn, transfer)**
+- ✅ **Token-2022 program support with extensions**
 
 ### Phase 2: Data Integration
 
@@ -739,15 +900,15 @@ For detailed roadmap information, see [Roadmap.md](Roadmap.md).
 
 ## 13. Conclusion
 
-The 16 Oracles represents a paradigm shift in crypto market intelligence, blockchain operations, and automated trading, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with **direct Solana blockchain integration**, intelligent automated trading capabilities, and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence and clarity.
+The 16 Oracles represents a paradigm shift in crypto market intelligence, blockchain operations, and automated trading, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with **complete Solana blockchain integration** (48+ endpoints across Solana and SPL Token APIs), intelligent automated trading capabilities, and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence and clarity.
 
-The **Solana CLI Web API wrapper** (25+ endpoints) provides seamless blockchain access for account management, transaction operations, validator monitoring, and staking functions. This integration bridges the gap between high-level oracle intelligence and low-level blockchain operations, enabling developers to build comprehensive blockchain applications on a unified platform.
+The **Solana CLI Web API wrapper** (25+ endpoints) provides seamless blockchain access for account management, transaction operations, validator monitoring, and staking functions. The **SPL Token CLI Web API wrapper** (23+ endpoints) extends this with comprehensive token management including creation, minting, burning, transfers, delegation, and Token-2022 program support. Together, these integrations bridge the gap between high-level oracle intelligence and low-level blockchain operations, enabling developers to build comprehensive blockchain applications on a unified platform.
 
-The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (105+ unit tests across the solution) guarantees reliability.
+The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (206+ unit tests across the solution, including 127 blockchain integration tests) guarantees reliability.
 
 The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, blockchain integrations, trading strategies, and analytical capabilities as the market demands.
 
-Through open API access, robust testing (105+ tests), secure trading infrastructure, direct blockchain integration, and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, and automated trading execution, serving traders, developers, investors, and communities worldwide.
+Through open API access, robust testing (206+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, and automated trading execution, serving traders, developers, investors, and communities worldwide.
 
 ---
 
@@ -759,6 +920,8 @@ Through open API access, robust testing (105+ tests), secure trading infrastruct
 - **Technical Documentation**:
   - See `DiscordBot.md` for bot integration details
   - See `SolanaAPI.md` for Solana CLI API wrapper documentation
+  - See `SPL-TOKEN-API.md` for SPL Token CLI API wrapper documentation
+  - See `SPL-TOKEN-TESTS.md` for SPL Token test documentation
   - See `TRADEBOT_README.md` for trading bot system documentation
   - See `CLAUDE.md` for development guidance
 - **Roadmap**: See `Roadmap.md` for development timeline

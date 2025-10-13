@@ -25,6 +25,18 @@
       - Support for all Solana networks (mainnet, devnet, testnet, localhost)
       - Generic command execution for advanced usage
       - Documented in SolanaAPI.md
+    - **SPL Token CLI Web API Wrapper**:
+      - 23+ RESTful endpoints wrapping SPL Token CLI commands
+      - Account management (accounts, address, balance, create-account, close, gc)
+      - Token operations (create-token, mint, burn, transfer, supply, close-mint)
+      - Token delegation (approve, revoke)
+      - Token authority management (authorize)
+      - Freeze/thaw operations
+      - Native SOL wrapping/unwrapping
+      - Display token information
+      - Support for Token-2022 program extensions
+      - Generic command execution for advanced usage
+      - Documented in SPL-TOKEN-API.md
     - Built with .NET minimal APIs and Swagger/OpenAPI documentation
   2. The16Oracles.domain
     - Domain layer containing shared models, services, and business logic
@@ -61,7 +73,11 @@
   7. The16Oracles.DAOA.nunit
     - NUnit test project for DAOA Web API testing
     - Built with .NET 9.0 and NUnit 4.2.2
-    - Tests oracle implementations and API endpoints
+    - Comprehensive test coverage (127+ tests):
+      - Oracle implementations and API endpoints
+      - Solana CLI service (81 tests)
+      - SPL Token CLI service (46 tests)
+    - Tests all blockchain integration endpoints
     - Includes code coverage collection via coverlet
   8. The16Oracles.www.Server.nunit
     - NUnit test project for trading bot and web server testing
@@ -76,10 +92,17 @@
   Additional Features
 
 - **Automated Trading**: Multi-stablecoin cascade trading bot on Solana with Jupiter Aggregator integration (documented in The16Oracles.www.Server/TRADEBOT_README.md)
-- **Solana CLI Web API**: RESTful wrapper for Solana blockchain operations with 25+ endpoints covering all major CLI commands (documented in SolanaAPI.md)
+- **Solana Blockchain Integration**:
+  - Solana CLI Web API: 25+ endpoints for blockchain operations (documented in SolanaAPI.md)
+  - SPL Token CLI Web API: 23+ endpoints for token operations (documented in SPL-TOKEN-API.md)
+  - Full support for account management, token operations, delegation, freeze/thaw, and native SOL wrapping
 - **Discord Bot Integration**: AI-powered NFT community bot with OpenAI integration for welcome messages, NFT showcases, and war game mechanics (documented in DiscordBot.md)
-- **Architecture**: Clean separation with domain logic, console runner, web API layers, automated trading services, and blockchain integration
-- **Testing**: Comprehensive unit test coverage across all projects with 105+ total tests (24 domain, 42 DAOA, 39 trading bot)
+- **Architecture**: Clean separation with domain logic, console runner, web API layers, automated trading services, and comprehensive blockchain integration
+- **Testing**: Comprehensive unit test coverage across all projects with 206+ total tests:
+  - The16Oracles.domain.nunit: 24 tests
+  - The16Oracles.DAOA.nunit: 127 tests (81 Solana CLI, 46 SPL Token CLI)
+  - The16Oracles.www.Server.nunit: 39 tests (trading bot)
+  - Additional: 16+ oracle and model tests
 - **Copyright**: © 2025 Jerrame Hertz, All Rights Reserved
 
-  This is a comprehensive crypto analytics, automated trading, blockchain operations, and community engagement platform combining oracle data feeds, Solana CLI integration, intelligent trading bots, and Discord community features.
+  This is a comprehensive crypto analytics, automated trading, blockchain operations, and community engagement platform combining oracle data feeds, full Solana and SPL Token CLI integration, intelligent trading bots, and Discord community features.

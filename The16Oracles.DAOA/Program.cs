@@ -1,6 +1,7 @@
 using The16Oracles.DAOA.Interfaces;
 using The16Oracles.DAOA.Models;
 using The16Oracles.DAOA.Models.Solana;
+using The16Oracles.DAOA.Models.SplToken;
 using The16Oracles.DAOA.Oracles;
 using The16Oracles.DAOA.Services;
 
@@ -68,6 +69,9 @@ builder.Services.AddSingleton<IAIOracle, TechAdoptionCurvesOracle>();
 
 // Register Solana service
 builder.Services.AddSingleton<ISolanaService, SolanaService>();
+
+// Register SPL Token service
+builder.Services.AddSingleton<ISplTokenService, SplTokenService>();
 
 var app = builder.Build();
 
@@ -467,6 +471,216 @@ app.MapPost("/api/solana/execute", async (ISolanaService solanaService, SolanaCo
 })
 .WithName("ExecuteSolanaCommand")
 .WithTags("Solana CLI")
+.WithOpenApi();
+
+#endregion
+
+#region SPL Token API Endpoints
+
+// Account Management
+app.MapPost("/api/spl-token/accounts", async (ISplTokenService splTokenService, TokenAccountsRequest request) =>
+{
+    var result = await splTokenService.GetAccountsAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetTokenAccounts")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/address", async (ISplTokenService splTokenService, TokenAddressRequest request) =>
+{
+    var result = await splTokenService.GetAddressAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetTokenAddress")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/balance", async (ISplTokenService splTokenService, TokenBalanceRequest request) =>
+{
+    var result = await splTokenService.GetBalanceAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetTokenBalance")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/create-account", async (ISplTokenService splTokenService, CreateTokenAccountRequest request) =>
+{
+    var result = await splTokenService.CreateAccountAsync(request);
+    return Results.Ok(result);
+})
+.WithName("CreateTokenAccount")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/close", async (ISplTokenService splTokenService, CloseTokenAccountRequest request) =>
+{
+    var result = await splTokenService.CloseAccountAsync(request);
+    return Results.Ok(result);
+})
+.WithName("CloseTokenAccount")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/gc", async (ISplTokenService splTokenService, GarbageCollectRequest request) =>
+{
+    var result = await splTokenService.GarbageCollectAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GarbageCollectTokenAccounts")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Token Operations
+app.MapPost("/api/spl-token/create-token", async (ISplTokenService splTokenService, CreateTokenRequest request) =>
+{
+    var result = await splTokenService.CreateTokenAsync(request);
+    return Results.Ok(result);
+})
+.WithName("CreateToken")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/mint", async (ISplTokenService splTokenService, MintTokensRequest request) =>
+{
+    var result = await splTokenService.MintAsync(request);
+    return Results.Ok(result);
+})
+.WithName("MintTokens")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/burn", async (ISplTokenService splTokenService, BurnTokensRequest request) =>
+{
+    var result = await splTokenService.BurnAsync(request);
+    return Results.Ok(result);
+})
+.WithName("BurnTokens")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/transfer", async (ISplTokenService splTokenService, TransferTokensRequest request) =>
+{
+    var result = await splTokenService.TransferAsync(request);
+    return Results.Ok(result);
+})
+.WithName("TransferTokens")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/supply", async (ISplTokenService splTokenService, TokenSupplyRequest request) =>
+{
+    var result = await splTokenService.GetSupplyAsync(request);
+    return Results.Ok(result);
+})
+.WithName("GetTokenSupply")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/close-mint", async (ISplTokenService splTokenService, CloseMintRequest request) =>
+{
+    var result = await splTokenService.CloseMintAsync(request);
+    return Results.Ok(result);
+})
+.WithName("CloseTokenMint")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Token Delegation
+app.MapPost("/api/spl-token/approve", async (ISplTokenService splTokenService, ApproveRequest request) =>
+{
+    var result = await splTokenService.ApproveAsync(request);
+    return Results.Ok(result);
+})
+.WithName("ApproveDelegate")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/revoke", async (ISplTokenService splTokenService, RevokeRequest request) =>
+{
+    var result = await splTokenService.RevokeAsync(request);
+    return Results.Ok(result);
+})
+.WithName("RevokeDelegate")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Token Authority
+app.MapPost("/api/spl-token/authorize", async (ISplTokenService splTokenService, AuthorizeRequest request) =>
+{
+    var result = await splTokenService.AuthorizeAsync(request);
+    return Results.Ok(result);
+})
+.WithName("AuthorizeToken")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Freeze/Thaw Operations
+app.MapPost("/api/spl-token/freeze", async (ISplTokenService splTokenService, FreezeAccountRequest request) =>
+{
+    var result = await splTokenService.FreezeAsync(request);
+    return Results.Ok(result);
+})
+.WithName("FreezeTokenAccount")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/thaw", async (ISplTokenService splTokenService, ThawAccountRequest request) =>
+{
+    var result = await splTokenService.ThawAsync(request);
+    return Results.Ok(result);
+})
+.WithName("ThawTokenAccount")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Native SOL Wrapping
+app.MapPost("/api/spl-token/wrap", async (ISplTokenService splTokenService, WrapRequest request) =>
+{
+    var result = await splTokenService.WrapAsync(request);
+    return Results.Ok(result);
+})
+.WithName("WrapSol")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/unwrap", async (ISplTokenService splTokenService, UnwrapRequest request) =>
+{
+    var result = await splTokenService.UnwrapAsync(request);
+    return Results.Ok(result);
+})
+.WithName("UnwrapSol")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+app.MapPost("/api/spl-token/sync-native", async (ISplTokenService splTokenService, SyncNativeRequest request) =>
+{
+    var result = await splTokenService.SyncNativeAsync(request);
+    return Results.Ok(result);
+})
+.WithName("SyncNativeAccount")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Display
+app.MapPost("/api/spl-token/display", async (ISplTokenService splTokenService, DisplayRequest request) =>
+{
+    var result = await splTokenService.DisplayAsync(request);
+    return Results.Ok(result);
+})
+.WithName("DisplayTokenInfo")
+.WithTags("SPL Token CLI")
+.WithOpenApi();
+
+// Generic command endpoint for advanced usage
+app.MapPost("/api/spl-token/execute", async (ISplTokenService splTokenService, SplTokenCommandRequest request) =>
+{
+    var result = await splTokenService.ExecuteCommandAsync(request);
+    return Results.Ok(result);
+})
+.WithName("ExecuteSplTokenCommand")
+.WithTags("SPL Token CLI")
 .WithOpenApi();
 
 #endregion
