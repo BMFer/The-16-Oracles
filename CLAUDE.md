@@ -46,9 +46,9 @@ dotnet test --filter "FullyQualifiedName~The16Oracles.domain.nunit.Models.Config
 ### Solution Structure
 This is a multi-project .NET solution with clean architecture:
 
-- **The16Oracles.DAOA** - ASP.NET Core Web API exposing 16 crypto oracle endpoints + Solana CLI wrapper
-- **The16Oracles.domain** - Shared domain layer with models and services (Discord bot functionality)
-- **The16Oracles.console** - Console application for running Discord bots (uses dependency injection)
+- **The16Oracles.DAOA** - ASP.NET Core Web API exposing 16 crypto oracle endpoints + Solana CLI wrapper + Oracle Wars game API
+- **The16Oracles.domain** - Shared domain layer with models and services (Discord bot functionality + Oracle Wars commands)
+- **The16Oracles.console** - Console application for running Discord bots with Oracle Wars game integration (uses dependency injection)
 - **The16Oracles.domain.nunit** - NUnit test project for domain layer
 - **The16Oracles.DAOA.nunit** - NUnit test project for DAOA Web API
 - **The16Oracles.www.Server** - ASP.NET Core backend with Solana trading bot system
@@ -123,6 +123,43 @@ The DAOA also includes a RESTful wrapper for Solana CLI commands:
 - `/api/solana/validators` - Get validator information
 - etc. (See `SolanaAPI.md` for complete documentation)
 
+### Oracle Wars Game API (DAOA Project)
+
+The DAOA also includes a complete Discord bot game called **Oracle Wars**:
+
+**Service Pattern** (see `The16Oracles.DAOA/Services/OracleGameService.cs`):
+1. Register service: `builder.Services.AddSingleton<IOracleGameService, OracleGameService>();`
+2. Create minimal API endpoints for game operations
+3. Integrate with existing oracles for battle calculations
+
+**Key Features**:
+- 9 game API endpoints under `/api/game/`
+- Player management with SOL balance and statistics
+- 14 playable oracles with varying costs (10-50 SOL) and power levels (2-8)
+- Battle system using live oracle confidence scores
+- Global leaderboard and ranking system
+- Daily bonus rewards (2 SOL per subscribed oracle)
+- In-memory game state using ConcurrentDictionary
+
+**Game Endpoints**: All under `/api/game/` with tag "Oracle Wars Game":
+- `/api/game/player/create` - Register new player (POST)
+- `/api/game/player/{userId}` - Get player profile (GET)
+- `/api/game/oracle/subscribe` - Subscribe to oracle (POST)
+- `/api/game/oracle/unsubscribe` - Unsubscribe from oracle (DELETE)
+- `/api/game/oracles` - List all oracles (GET)
+- `/api/game/battle/create` - Create battle (POST)
+- `/api/game/battle/{id}/execute` - Execute battle (POST)
+- `/api/game/leaderboard` - Get rankings (GET)
+- `/api/game/daily-bonus/{userId}` - Claim daily bonus (POST)
+
+**Battle Calculation**:
+```csharp
+Player Score = Σ(Oracle Confidence Score × Oracle Power Level)
+Winner = Player with higher total score (or random if tie)
+```
+
+See `ORACLE_WARS_GAME.md` for complete API documentation.
+
 ### Discord Bot Architecture (Console + Domain)
 
 The console application loads bot configurations from `config.json` which can contain multiple Discord bot instances. Uses Microsoft.Extensions.DependencyInjection for service registration.
@@ -131,8 +168,20 @@ The console application loads bot configurations from `config.json` which can co
 - `BotService` - Manages Discord bot instances (from domain layer)
 - `DataModel` - Data access layer (from domain layer)
 - `DiscordBot` - Individual bot instance with DSharpPlus integration
+- `OracleWarsApiService` - HTTP client for Oracle Wars game API communication
 
 **Configuration Pattern**: Load `config.json` → deserialize to `Config` model → extract specific Discord config by ID → create bot instance via DI
+
+**Oracle Wars Discord Integration**:
+The Discord bot automatically registers Oracle Wars commands when initialized:
+- 8 slash commands (`/ow-*`) - Modern Discord UI with autocomplete
+- 9 prefix commands (`!ow-*`) - Traditional command-line style
+- Commands: register, profile, oracles, subscribe, battle, leaderboard, daily bonus, help
+- Rich Discord embeds with colors, fields, and user mentions
+- Auto-executed battles with narrative generation
+- Error handling with user-friendly messages
+
+See `DISCORD_ORACLE_WARS.md` for complete Discord bot integration documentation.
 
 ## Configuration Requirements
 
@@ -163,14 +212,21 @@ The console project requires `config.json` in the project directory:
       "Id": 1,
       "Name": "Bot Name",
       "Token": "YOUR_DISCORD_BOT_TOKEN",
+      "CommandPrefix": "!",
       "WelcomeChannelId": 123456789,
-      "AssetsChannelId": 123456789
+      "AssetsChannelId": 123456789,
+      "OracleWarsApiUrl": "https://localhost:5001"
     }
   ]
 }
 ```
 
+**New Fields for Oracle Wars**:
+- `CommandPrefix`: Prefix for traditional commands (e.g., "!" for `!ow-register`)
+- `OracleWarsApiUrl`: URL of the DAOA API for game functionality
+
 See `DiscordBot.md` for comprehensive Discord bot setup and features.
+See `QUICK_START_ORACLE_WARS.md` for 5-minute Oracle Wars setup guide.
 
 ## API Design Patterns
 
@@ -202,6 +258,14 @@ All Solana CLI wrapper endpoints are under `/api/solana/`:
 - POST endpoints for operations requiring parameters (e.g., `/api/solana/balance`, `/api/solana/transfer`)
 - Generic execution endpoint: `/api/solana/execute` for advanced custom commands
 
+### Oracle Wars Game Endpoints
+All game endpoints are under `/api/game/` with Swagger tag "Oracle Wars Game":
+- Player management: `/api/game/player/*`
+- Oracle operations: `/api/game/oracle/*`
+- Battle system: `/api/game/battle/*`
+- Leaderboard: `/api/game/leaderboard`
+- Daily rewards: `/api/game/daily-bonus/{userId}`
+
 ### DataBundle Pattern
 Most oracles currently accept an empty `DataBundle` object. This is designed for future expansion where oracles might receive contextual data or parameters.
 
@@ -225,8 +289,15 @@ The domain layer includes a sophisticated Discord bot system with:
 - **War game mechanics** with AI-generated battle narratives
 - **Traditional prefix commands** and **slash commands**
 - **DSharpPlus 4.5.1** with CommandsNext, Interactivity, and SlashCommands modules
+- **Oracle Wars Game Integration**:
+  - 17 Discord commands (8 slash + 9 prefix) for gameplay
+  - Rich embeds with battle results and leaderboards
+  - Real-time communication with DAOA game API
+  - Player profiles, oracle subscriptions, and PvP battles
+  - Daily rewards and global rankings
 
 See `DiscordBot.md` for detailed documentation on bot setup, commands, and customization.
+See `DISCORD_ORACLE_WARS.md` for Oracle Wars Discord integration guide.
 
 ## Important Notes
 
@@ -245,7 +316,19 @@ Both the DAOA API (via appsettings.json) and Discord bots (via config.json) are 
 
 ## Related Documentation
 
+### Oracle and API Documentation
 - **SolanaAPI.md** - Complete documentation for the Solana CLI Web API wrapper with request/response examples
-- **DiscordBot.md** - Comprehensive guide for Discord bot setup, commands, and customization
-- **TRADEBOT_README.md** - Documentation for the Solana trading bot system (in The16Oracles.www.Server/)
+- **SPL-TOKEN-API.md** - Complete documentation for the SPL Token CLI Web API wrapper
 - **README.md** - Project overview and solution structure
+
+### Discord Bot Documentation
+- **DiscordBot.md** - Comprehensive guide for Discord bot setup, commands, and customization
+
+### Oracle Wars Game Documentation
+- **QUICK_START_ORACLE_WARS.md** - 5-minute setup guide for Oracle Wars game
+- **ORACLE_WARS_GAME.md** - Complete API reference for Oracle Wars game endpoints
+- **DISCORD_ORACLE_WARS.md** - Discord bot integration guide for Oracle Wars
+- **ORACLE_WARS_SUMMARY.md** - Complete summary of Oracle Wars implementation
+
+### Trading Bot Documentation
+- **TRADEBOT_README.md** - Documentation for the Solana trading bot system (in The16Oracles.www.Server/)

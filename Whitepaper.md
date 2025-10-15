@@ -22,10 +22,11 @@ The 16 Oracles is a decentralized autonomous oracle application (DAOA) designed 
 7. [Solana Blockchain Integration](#7-solana-blockchain-integration)
 8. [Automated Trading Integration](#8-automated-trading-integration)
 9. [Community Integration](#9-community-integration)
-10. [Use Cases](#10-use-cases)
-11. [Security & Reliability](#11-security--reliability)
-12. [Roadmap](#12-roadmap)
-13. [Conclusion](#13-conclusion)
+10. [Oracle Wars: Discord Gaming Platform](#10-oracle-wars-discord-gaming-platform)
+11. [Use Cases](#11-use-cases)
+12. [Security & Reliability](#12-security--reliability)
+13. [Roadmap](#13-roadmap)
+14. [Conclusion](#14-conclusion)
 
 ---
 
@@ -307,9 +308,9 @@ Tracks stablecoin minting, redemption, and movement patterns as market sentiment
 
 ``` markdown
 The16Oracles.sln
-* The16Oracles.DAOA              # Web API exposing oracle endpoints + Solana/SPL Token CLI wrappers
-* The16Oracles.domain            # Shared domain models and services
-* The16Oracles.console           # Console application for Discord bots
+* The16Oracles.DAOA              # Web API exposing oracle endpoints + Solana/SPL Token CLI wrappers + Oracle Wars game API
+* The16Oracles.domain            # Shared domain models and services + Oracle Wars Discord bot integration
+* The16Oracles.console           # Console application for Discord bots + Oracle Wars game commands
 * The16Oracles.www.Server        # ASP.NET Core 8.0 backend with trading bot system
 * the16oracles.www.client        # Angular 17 frontend SPA
 * The16Oracles.domain.nunit      # Unit tests for domain layer (24 tests)
@@ -409,6 +410,26 @@ POST /api/spl-token/sync-native          # Sync native SOL account
 # Display & Utilities
 POST /api/spl-token/display              # Display token information
 POST /api/spl-token/execute              # Execute any SPL Token CLI command
+```
+
+**Oracle Wars Game API Endpoints** (9 endpoints):
+``` markdown
+# Player Management
+POST /api/game/player/create             # Register new player with starting SOL
+GET  /api/game/player/{userId}           # Get player profile and statistics
+
+# Oracle Operations
+POST   /api/game/oracle/subscribe        # Subscribe to oracle (costs SOL)
+DELETE /api/game/oracle/unsubscribe      # Unsubscribe from oracle
+GET    /api/game/oracles                 # List all available oracles
+
+# Battle System
+POST /api/game/battle/create             # Create PvP battle challenge
+POST /api/game/battle/{id}/execute       # Execute battle using oracle data
+
+# Rewards & Rankings
+GET  /api/game/leaderboard               # Get global player rankings
+POST /api/game/daily-bonus/{userId}      # Claim daily SOL bonus
 ```
 
 ### 6.4 Data Models
@@ -688,6 +709,9 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - NFT showcase capabilities
 - War game mechanics for community engagement
 - Custom command framework for oracle queries and trade monitoring
+- **Oracle Wars game integration with 17 Discord commands (8 slash + 9 prefix)**
+- **Rich Discord embeds for battle results and leaderboards**
+- **Real-time player statistics and SOL balance tracking**
 
 ### 9.2 Community Engagement
 
@@ -696,12 +720,315 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - Community-driven oracle calibration feedback
 - Educational content explaining oracle insights and trading strategies
 - Collaborative analysis and discussion forums
+- **Interactive Oracle Wars gameplay fostering community competition**
+- **Daily reward system encouraging regular community engagement**
+- **Global leaderboards promoting community rivalry and recognition**
 
 ---
 
-## 10. Use Cases
+## 10. Oracle Wars: Discord Gaming Platform
 
-### 10.1 Individual Traders & Investors
+### 10.1 Overview
+
+Oracle Wars is a complete Discord bot game that transforms The 16 Oracles into an interactive, competitive gaming experience. Players battle each other using oracle subscriptions, creating a unique fusion of blockchain intelligence, community engagement, and gamification.
+
+**Core Concept**: Players subscribe to oracles (each with unique costs and power levels), then challenge opponents to battles where oracle confidence scores determine victory. Winners earn SOL, climb leaderboards, and gain prestige within the community.
+
+### 10.2 Game Architecture
+
+**Multi-Layer Integration**:
+
+``` markdown
+Discord Platform (User Interface)
+    ↓
+The16Oracles.domain (Discord Bot - 17 Commands)
+    ↓ HTTPS
+The16Oracles.DAOA (Game API - 9 Endpoints)
+    ↓
+Oracle Wars Game Service (Battle Logic)
+    ↓
+16 Live Oracles (Confidence Scoring)
+```
+
+**Technology Stack**:
+- **Frontend**: Discord slash commands (/ow-*) and prefix commands (!ow-*)
+- **Bot Framework**: DSharpPlus 4.5.1 with CommandsNext and SlashCommands
+- **API Communication**: OracleWarsApiService (HTTP client)
+- **Backend API**: ASP.NET Core minimal APIs
+- **Game Logic**: OracleGameService with in-memory storage
+- **Oracle Integration**: Live confidence scores from all 16 oracles
+
+### 10.3 Game Mechanics
+
+#### 10.3.1 Player System
+
+**Registration**:
+- Players start with 100 SOL (game currency)
+- Discord User ID serves as unique identifier
+- Profile tracks wins, losses, SOL balance, and oracle subscriptions
+
+**Statistics Tracked**:
+- Total wins and losses
+- Win rate percentage
+- Current SOL balance
+- Subscribed oracles list
+- Account creation and last activity timestamps
+
+#### 10.3.2 Oracle Subscription System
+
+**14 Playable Oracles Across 5 Categories**:
+
+| Category | Count | Price Range | Power Range |
+|----------|-------|-------------|-------------|
+| Market Analysis | 4 | 10-30 SOL | 2-5 |
+| Risk Detection | 2 | 25-50 SOL | 4-8 |
+| Opportunities | 2 | 15-35 SOL | 3-6 |
+| Technical Metrics | 3 | 15-25 SOL | 3-5 |
+| Trends | 3 | 20-40 SOL | 4-7 |
+
+**Most Powerful Oracle**: Black Swan Detection (50 SOL, Power Level 8)
+**Budget-Friendly Option**: NFT Market Sentiment (10 SOL, Power Level 2)
+
+**Subscription Mechanics**:
+- One-time cost per oracle (permanent subscription)
+- Subscriptions contribute to battle calculations
+- Enable daily bonus rewards (2 SOL per oracle)
+- Can be unsubscribed at any time (no refund)
+
+#### 10.3.3 Battle System
+
+**Battle Creation**:
+- Challenge any Discord user by mention
+- Set wager amount (minimum 1 SOL)
+- Both players must have sufficient balance
+
+**Battle Calculation Formula**:
+``` markdown
+Player Score = Σ(Oracle Confidence Score × Oracle Power Level)
+
+For each subscribed oracle:
+  - Fetch live confidence score (0.0 - 1.0) from oracle API
+  - Multiply by oracle's power level (2-8)
+  - Sum all oracle contributions
+
+Winner = Player with higher total score (random if tie)
+```
+
+**Outcome**:
+- Winner receives wager SOL from loser
+- Win/loss statistics updated
+- Auto-generated battle narrative with emoji decorations
+- Rich Discord embed displays complete battle breakdown
+
+**Example Battle**:
+``` markdown
+Player A:
+  - whale-behavior oracle: 0.85 confidence × 5 power = 4.25
+  - black-swan oracle: 0.62 confidence × 8 power = 4.96
+  Total Score: 9.21
+
+Player B:
+  - defi-liquidity oracle: 0.78 confidence × 4 power = 3.12
+  - nft-sentiment oracle: 0.91 confidence × 2 power = 1.82
+  Total Score: 4.94
+
+Winner: Player A (9.21 > 4.94)
+Player A gains 10 SOL, Player B loses 10 SOL
+```
+
+#### 10.3.4 Rewards & Progression
+
+**Daily Bonuses**:
+- Claim once per 24 hours
+- Earn 2 SOL per subscribed oracle
+- Encourages diverse oracle portfolios
+- Passive income for active players
+
+**Global Leaderboard**:
+- Ranked by total wins (primary)
+- SOL balance used as tiebreaker
+- Displays win rate percentage
+- Top 10 default, customizable limit
+- Public recognition for top players
+
+### 10.4 Discord Commands
+
+#### 10.4.1 Slash Commands (Modern UI)
+
+| Command | Parameters | Description |
+|---------|------------|-------------|
+| `/ow-register` | None | Create player profile |
+| `/ow-profile` | None | View stats and subscriptions |
+| `/ow-oracles` | None | List all 14 oracles |
+| `/ow-subscribe` | oracle (string) | Subscribe to oracle |
+| `/ow-battle` | opponent (user), wager (number) | Challenge player |
+| `/ow-execute-battle` | battle-id (string) | Execute pending battle |
+| `/ow-leaderboard` | limit (number, optional) | View rankings |
+| `/ow-daily` | None | Claim daily bonus |
+
+#### 10.4.2 Prefix Commands (Traditional)
+
+| Command | Aliases | Usage Example |
+|---------|---------|---------------|
+| `!ow-help` | - | `!ow-help` |
+| `!ow-register` | - | `!ow-register` |
+| `!ow-profile` | !ow-stats, !ow-me | `!ow-profile` |
+| `!ow-oracles` | !ow-list | `!ow-oracles` |
+| `!ow-subscribe` | - | `!ow-subscribe whale-behavior` |
+| `!ow-unsubscribe` | - | `!ow-unsubscribe whale-behavior` |
+| `!ow-battle` | - | `!ow-battle @Alice 10` |
+| `!ow-leaderboard` | !ow-top, !ow-lb | `!ow-leaderboard 20` |
+| `!ow-daily` | !ow-bonus | `!ow-daily` |
+
+### 10.5 API Endpoints
+
+**All under `/api/game/` with Swagger tag "Oracle Wars Game"**:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/player/create` | Register new player |
+| GET | `/player/{userId}` | Get player profile |
+| POST | `/oracle/subscribe` | Subscribe to oracle |
+| DELETE | `/oracle/unsubscribe` | Unsubscribe from oracle |
+| GET | `/oracles` | List all oracles |
+| POST | `/battle/create` | Create battle |
+| POST | `/battle/{id}/execute` | Execute battle |
+| GET | `/leaderboard` | Get rankings |
+| POST | `/daily-bonus/{userId}` | Claim daily bonus |
+
+### 10.6 User Experience Features
+
+**Rich Discord Embeds**:
+- Color-coded responses (green for success, red for errors, gold for battles)
+- Organized field layouts for easy reading
+- User avatars in profile displays
+- Timestamps for battle results
+- Formatted leaderboards with rankings
+- Battle narratives with emoji decorations (⚔️, 🏆, 💰, 🔮)
+
+**Example Profile Embed**:
+``` markdown
+⚔️ CryptoWarrior's Profile
+
+💰 SOL Balance: 150 SOL
+🏆 Wins: 12
+💀 Losses: 3
+📊 Win Rate: 80.0%
+🔮 Subscribed Oracles: 4
+
+📜 Oracle List: whale-behavior, black-swan, defi-liquidity, nft-sentiment
+```
+
+**Error Handling**:
+- User-friendly error messages
+- Guidance for resolution
+- Validation before operations
+- Fallback to simulated scores if oracle API fails
+
+### 10.7 Strategic Gameplay
+
+**Beginner Strategy**:
+1. Start with budget oracles (nft-sentiment: 10 SOL)
+2. Win small battles to build SOL reserves
+3. Gradually add medium-power oracles
+4. Claim daily bonuses for passive income
+
+**Advanced Strategy**:
+1. Invest in Black Swan Detection (8 power) early
+2. Diversify across categories for balanced strength
+3. Challenge players with fewer oracles
+4. Maximize daily bonuses with 5+ oracle subscriptions
+
+**Meta Considerations**:
+- Black Swan (50 SOL) provides highest ROI if oracle confidence is consistently high
+- Whale Behavior (30 SOL, 5 power) offers good mid-tier value
+- Multiple low-power oracles may outperform single high-power oracle
+- Daily bonus system rewards oracle diversity over power concentration
+
+### 10.8 Community Impact
+
+**Engagement Benefits**:
+- Encourages daily server activity (daily bonuses)
+- Promotes friendly competition (leaderboards)
+- Creates discussion around oracle performance
+- Educates community about The 16 Oracles functionality
+- Provides entertainment value beyond market analysis
+
+**Social Dynamics**:
+- Rivalries develop through repeated battles
+- Oracle subscription choices become part of player identity
+- Leaderboard rankings generate status and recognition
+- Community strategizes optimal oracle portfolios
+- Shared excitement around battle outcomes
+
+### 10.9 Technical Implementation
+
+**Files Created (13 Total)**:
+- 4 model files (Player, Battle, OracleDefinition, GameRequests)
+- 2 service files (IOracleGameService, OracleGameService)
+- 2 command files (SlashCommands, PrefixCommands)
+- 1 API service file (OracleWarsApiService)
+- 4 documentation files (Game API, Discord integration, Quick start, Summary)
+
+**Lines of Code**: ~2,500+ across all components
+**Lines of Documentation**: ~2,100+ across all guides
+
+**Testing**:
+- Manual testing via Discord and Swagger UI
+- Build verification: 0 errors, 0 warnings
+- Integration testing with live oracle data
+
+### 10.10 Future Enhancements
+
+**Short-Term Roadmap**:
+- Database persistence (Entity Framework + PostgreSQL)
+- Rate limiting to prevent spam
+- Oracle data caching for performance
+- Dependency injection for API service
+
+**Medium-Term Features**:
+- Multi-player tournaments (bracket system)
+- Power-ups and consumable items
+- Achievement system with badges
+- Guild/team battles
+- Battle replay/history viewing
+
+**Long-Term Vision**:
+- Real Solana wallet integration
+- NFT rewards for achievements
+- Cross-server leaderboards
+- Mobile companion app
+- Web dashboard for statistics
+
+### 10.11 Documentation
+
+**Complete Documentation Suite**:
+- **ORACLE_WARS_GAME.md**: Complete API reference with request/response examples
+- **DISCORD_ORACLE_WARS.MD**: Discord bot integration guide with troubleshooting
+- **QUICK_START_ORACLE_WARS.md**: 5-minute setup guide for rapid deployment
+- **ORACLE_WARS_SUMMARY.md**: Comprehensive implementation summary
+
+**Quick Start**:
+``` bash
+# Terminal 1: Start DAOA API
+cd The16Oracles.DAOA
+dotnet run
+
+# Terminal 2: Start Discord Bot
+cd The16Oracles.console
+dotnet run
+
+# Discord: Play the game
+/ow-register
+/ow-subscribe oracle:whale-behavior
+/ow-battle opponent:@user wager:10
+```
+
+---
+
+## 11. Use Cases
+
+### 11.1 Individual Traders & Investors
 
 - Monitor whale activity before making investment decisions
 - Track emerging narratives for early-stage opportunities
@@ -711,7 +1038,10 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Utilize cascade trading bot for automated stablecoin optimization**
 - **Configure custom trading pairs based on oracle insights**
 
-### 10.2 DeFi Protocol Operators
+- **Play Oracle Wars to learn about oracle functionality through gamification**
+- **Compete with community members for leaderboard rankings**
+
+### 11.2 DeFi Protocol Operators
 
 - Monitor competitive liquidity flows
 - Track tokenomics innovations in the market
@@ -721,15 +1051,17 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Automate treasury management with multi-stablecoin trading**
 - **Leverage profitability rankings for capital efficiency**
 
-### 10.3 NFT Communities
+### 11.3 NFT Communities
 
 - Track floor price trends and sentiment
 - Identify emerging NFT opportunities
 - Monitor whale accumulation in collections
 - Gauge overall NFT market health
 - **Receive Discord notifications for trading bot performance**
+- **Engage community with Oracle Wars tournaments and events**
+- **Use NFT Market Sentiment oracle in gameplay strategy**
 
-### 10.4 Blockchain Developers
+### 11.4 Blockchain Developers
 
 - Monitor L2 adoption trends for deployment decisions
 - Track technology adoption curves
@@ -740,7 +1072,7 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Integrate trading bot API into custom applications**
 - **Build on cascade trading framework for specialized strategies**
 
-### 10.5 Institutional Investors
+### 11.5 Institutional Investors
 
 - Comprehensive risk assessment across portfolio
 - Regulatory compliance monitoring
@@ -750,7 +1082,7 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Automated stablecoin position management with risk controls**
 - **Multi-pair cascade execution for capital efficiency**
 
-### 10.6 Automated Trading Strategies
+### 11.6 Automated Trading Strategies
 
 - **Stablecoin Yield Optimization**: Cascade through multiple pairs to capture arbitrage opportunities
 - **Market-Making Automation**: Dynamic pair ranking based on liquidity conditions
@@ -758,7 +1090,15 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Risk-Controlled Speculation**: Configurable limits prevent overexposure
 - **Multi-Chain Opportunity Capture**: Execute on Solana with plan to expand to other chains
 
-### 10.7 DevOps & Infrastructure Teams
+### 11.7 Discord Communities & DAOs
+
+- **Integrate Oracle Wars for community engagement and gamification**
+- **Host tournaments with real prizes funded by DAO treasury**
+- **Educational tool for teaching oracle concepts through gameplay**
+- **Community building through friendly competition and social interaction**
+- **Daily engagement incentives keeping members active**
+
+### 11.8 DevOps & Infrastructure Teams
 
 - **Network Health Monitoring**: Automated cluster version and validator checks
 - **Transaction Monitoring**: Track transaction counts and confirmation status
@@ -854,6 +1194,10 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - ✅ **Risk management framework with configurable limits**
 - ✅ **Complete token management capabilities (create, mint, burn, transfer)**
 - ✅ **Token-2022 program support with extensions**
+- ✅ **Oracle Wars Discord game with 17 commands and 9 API endpoints**
+- ✅ **PvP battle system using live oracle confidence scores**
+- ✅ **Global leaderboard and daily reward system**
+- ✅ **Complete game documentation (4 guides, 2,100+ lines)**
 
 ### Phase 2: Data Integration
 
@@ -875,6 +1219,9 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Automated cascade optimization based on market conditions**
 - **Historical trading performance analytics**
 - **Multi-timeframe profitability analysis**
+- **Oracle Wars database persistence and enhanced analytics**
+- **Tournament system and achievement tracking**
+- **Oracle Wars web dashboard integration**
 
 ### Phase 4: Ecosystem Expansion
 
@@ -886,6 +1233,9 @@ The 16 Oracles includes AI-powered Discord bot functionality that brings oracle 
 - **Cross-chain arbitrage strategies**
 - **Trading bot marketplace for custom strategies**
 - **Premium RPC provider integrations (Helius, QuickNode)**
+- **Oracle Wars NFT rewards and real Solana wallet integration**
+- **Cross-server leaderboards and global tournaments**
+- **Mobile companion app for Oracle Wars**
 
 ### Phase 5: Decentralization
 
@@ -900,15 +1250,17 @@ For detailed roadmap information, see [Roadmap.md](Roadmap.md).
 
 ## 13. Conclusion
 
-The 16 Oracles represents a paradigm shift in crypto market intelligence, blockchain operations, and automated trading, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with **complete Solana blockchain integration** (48+ endpoints across Solana and SPL Token APIs), intelligent automated trading capabilities, and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence and clarity.
+The 16 Oracles represents a paradigm shift in crypto market intelligence, blockchain operations, automated trading, and community gaming, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with **complete Solana blockchain integration** (48+ endpoints across Solana and SPL Token APIs), intelligent automated trading capabilities, **interactive Discord gaming** (Oracle Wars), and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence, clarity, and entertainment.
 
 The **Solana CLI Web API wrapper** (25+ endpoints) provides seamless blockchain access for account management, transaction operations, validator monitoring, and staking functions. The **SPL Token CLI Web API wrapper** (23+ endpoints) extends this with comprehensive token management including creation, minting, burning, transfers, delegation, and Token-2022 program support. Together, these integrations bridge the gap between high-level oracle intelligence and low-level blockchain operations, enabling developers to build comprehensive blockchain applications on a unified platform.
 
 The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (206+ unit tests across the solution, including 127 blockchain integration tests) guarantees reliability.
 
-The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, blockchain integrations, trading strategies, and analytical capabilities as the market demands.
+**Oracle Wars** demonstrates the platform's innovative approach to community engagement by gamifying oracle intelligence. With 17 Discord commands, 9 game API endpoints, and a sophisticated battle system powered by live oracle data, Oracle Wars transforms market intelligence into an interactive, competitive experience. Players earn rewards, climb leaderboards, and learn about oracle functionality through engaging gameplay, creating a unique bridge between education and entertainment.
 
-Through open API access, robust testing (206+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, and automated trading execution, serving traders, developers, investors, and communities worldwide.
+The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, blockchain integrations, trading strategies, gaming features, and analytical capabilities as the market demands.
+
+Through open API access, robust testing (206+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), interactive gaming platform (Oracle Wars), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, automated trading execution, and community engagement, serving traders, developers, investors, gamers, and communities worldwide.
 
 ---
 
@@ -924,6 +1276,11 @@ Through open API access, robust testing (206+ tests), secure trading infrastruct
   - See `SPL-TOKEN-TESTS.md` for SPL Token test documentation
   - See `TRADEBOT_README.md` for trading bot system documentation
   - See `CLAUDE.md` for development guidance
+- **Oracle Wars Game Documentation**:
+  - See `QUICK_START_ORACLE_WARS.md` for 5-minute setup guide
+  - See `ORACLE_WARS_GAME.md` for complete API reference
+  - See `DISCORD_ORACLE_WARS.md` for Discord bot integration guide
+  - See `ORACLE_WARS_SUMMARY.md` for implementation summary
 - **Roadmap**: See `Roadmap.md` for development timeline
 
 ---

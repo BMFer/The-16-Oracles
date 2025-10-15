@@ -3,6 +3,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Logging;
+using The16Oracles.domain.Commands;
 using The16Oracles.domain.Models;
 
 namespace The16Oracles.domain.Services
@@ -38,6 +39,13 @@ namespace The16Oracles.domain.Services
             };
 
             Commands = Client.UseCommandsNext(commandsConfig);
+
+            // Register Oracle Wars prefix commands
+            Commands.RegisterCommands<OracleWarsPrefixCommands>();
+
+            // Register Oracle Wars slash commands
+            SlashCommands = Client.UseSlashCommands();
+            SlashCommands.RegisterCommands<OracleWarsSlashCommands>();
 
             Client.Ready += OnClientReady;
 

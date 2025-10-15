@@ -1,0 +1,19 @@
+{
+  "SolutionName": "The16Oracles",
+  "SolutionDisplayName": "The 16 Oracles",
+  "ProjectVersion": "1.0.0",
+  "Developer": "Your Name",
+  "Discords": [
+    {
+      "Id": 1,
+      "Name": "Oracle Wars Bot",
+      "Token": "DISCORD_BOT_TOKEN",
+      "CommandPrefix": "!",
+      "WelcomeChannelId": "123456789012345678",
+      "AssetsChannelId": "123456789012345678",
+      "LaunchpadUrl": "https://your-project.com",
+      "OracleWarsApiUrl": "https://localhost:5001",
+      "Oracles": []
+    }
+  ]
+}

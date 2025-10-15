@@ -9,6 +9,7 @@
         public string WelcomeChannelId { get; set; }
         public string AssetsChannelId { get; set; }
         public string LaunchpadUrl { get; set; }
+        public string OracleWarsApiUrl { get; set; } = "https://localhost:5001";
         public Oracle[] Oracles { get; set; }
     }
 }

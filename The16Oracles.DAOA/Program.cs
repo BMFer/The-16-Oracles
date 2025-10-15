@@ -1,5 +1,6 @@
 using The16Oracles.DAOA.Interfaces;
 using The16Oracles.DAOA.Models;
+using The16Oracles.DAOA.Models.Game;
 using The16Oracles.DAOA.Models.Solana;
 using The16Oracles.DAOA.Models.SplToken;
 using The16Oracles.DAOA.Oracles;
@@ -72,6 +73,9 @@ builder.Services.AddSingleton<ISolanaService, SolanaService>();
 
 // Register SPL Token service
 builder.Services.AddSingleton<ISplTokenService, SplTokenService>();
+
+// Register Oracle Game service
+builder.Services.AddSingleton<IOracleGameService, OracleGameService>();
 
 var app = builder.Build();
 
@@ -681,6 +685,95 @@ app.MapPost("/api/spl-token/execute", async (ISplTokenService splTokenService, S
 })
 .WithName("ExecuteSplTokenCommand")
 .WithTags("SPL Token CLI")
+.WithOpenApi();
+
+#endregion
+
+#region Oracle Wars Game Endpoints
+
+// Player Management
+app.MapPost("/api/game/player/create", async (IOracleGameService gameService, CreatePlayerRequest request) =>
+{
+    var result = await gameService.CreatePlayerAsync(request);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("CreateGamePlayer")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+app.MapGet("/api/game/player/{discordUserId}", async (IOracleGameService gameService, string discordUserId) =>
+{
+    var result = await gameService.GetPlayerAsync(discordUserId);
+    return result.Success ? Results.Ok(result) : Results.NotFound(result);
+})
+.WithName("GetGamePlayer")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+// Oracle Subscriptions
+app.MapPost("/api/game/oracle/subscribe", async (IOracleGameService gameService, SubscribeOracleRequest request) =>
+{
+    var result = await gameService.SubscribeToOracleAsync(request);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("SubscribeToOracle")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+app.MapDelete("/api/game/oracle/unsubscribe", async (IOracleGameService gameService, [Microsoft.AspNetCore.Mvc.FromQuery] string discordUserId, [Microsoft.AspNetCore.Mvc.FromQuery] string oracleName) =>
+{
+    var result = await gameService.UnsubscribeFromOracleAsync(discordUserId, oracleName);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("UnsubscribeFromOracle")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+app.MapGet("/api/game/oracles", async (IOracleGameService gameService) =>
+{
+    var result = await gameService.GetAvailableOraclesAsync();
+    return Results.Ok(result);
+})
+.WithName("GetAvailableOracles")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+// Battle System
+app.MapPost("/api/game/battle/create", async (IOracleGameService gameService, CreateBattleRequest request) =>
+{
+    var result = await gameService.CreateBattleAsync(request);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("CreateBattle")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+app.MapPost("/api/game/battle/{battleId}/execute", async (IOracleGameService gameService, string battleId) =>
+{
+    var result = await gameService.ExecuteBattleAsync(battleId);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("ExecuteBattle")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+// Leaderboard & Bonuses
+app.MapGet("/api/game/leaderboard", async (IOracleGameService gameService, [Microsoft.AspNetCore.Mvc.FromQuery] int limit = 10) =>
+{
+    var result = await gameService.GetLeaderboardAsync(limit);
+    return Results.Ok(result);
+})
+.WithName("GetLeaderboard")
+.WithTags("Oracle Wars Game")
+.WithOpenApi();
+
+app.MapPost("/api/game/daily-bonus/{discordUserId}", async (IOracleGameService gameService, string discordUserId) =>
+{
+    var result = await gameService.ClaimDailyBonusAsync(discordUserId);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("ClaimDailyBonus")
+.WithTags("Oracle Wars Game")
 .WithOpenApi();
 
 #endregion
