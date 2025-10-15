@@ -23,10 +23,11 @@ The 16 Oracles is a decentralized autonomous oracle application (DAOA) designed 
 8. [Automated Trading Integration](#8-automated-trading-integration)
 9. [Community Integration](#9-community-integration)
 10. [Oracle Wars: Discord Gaming Platform](#10-oracle-wars-discord-gaming-platform)
-11. [Use Cases](#11-use-cases)
-12. [Security & Reliability](#12-security--reliability)
-13. [Roadmap](#13-roadmap)
-14. [Conclusion](#14-conclusion)
+11. [Wallet Relationship Analyzer](#11-wallet-relationship-analyzer)
+12. [Use Cases](#12-use-cases)
+13. [Security & Reliability](#13-security--reliability)
+14. [Roadmap](#14-roadmap)
+15. [Conclusion](#15-conclusion)
 
 ---
 
@@ -1026,9 +1027,451 @@ dotnet run
 
 ---
 
-## 11. Use Cases
+## 11. Wallet Relationship Analyzer
 
-### 11.1 Individual Traders & Investors
+### 11.1 Overview
+
+The Wallet Relationship Analyzer is an advanced pattern matching tool that identifies relationships between Solana wallets by analyzing shared tokens, balance patterns, temporal proximity, and activity correlations. This powerful analysis capability enables detection of fraud, sybil attacks, whale clusters, and coordinated governance voting.
+
+**Core Purpose**: Analyze multiple wallet addresses simultaneously to discover hidden connections, identify suspicious patterns, and cluster related wallets based on on-chain behavior and holdings.
+
+### 11.2 Architecture
+
+**Multi-Layer Analysis System**:
+
+``` markdown
+User Request (Wallet Addresses + Configuration)
+    ↓
+WalletRelationshipAnalyzer Service
+    ↓ HTTP Requests
+The16Oracles.DAOA Endpoints
+    ├── /api/solana/balance (SOL balances)
+    ├── /api/spl-token/accounts (Token holdings)
+    └── /api/solana/transaction-history (Activity metrics)
+    ↓
+Pattern Matching Algorithms (6 Algorithms)
+    ├── Shared Token Detection
+    ├── Balance Similarity Analysis
+    ├── SOL Balance Comparison
+    ├── Temporal Proximity Detection
+    ├── Activity Correlation
+    └── Cluster Identification
+    ↓
+Relationship Scoring & Classification
+    ↓
+WalletClusterAnalysis Result
+```
+
+**Technology Stack**:
+- **Service Layer**: WalletRelationshipAnalyzer (C# .NET 8.0)
+- **Data Models**: 12 comprehensive models for analysis
+- **HTTP Client**: Newtonsoft.Json for API communication
+- **Algorithms**: 6 specialized pattern matching algorithms
+- **Testing**: 19 comprehensive unit tests with 100% pass rate
+
+### 11.3 Pattern Matching Algorithms
+
+The analyzer employs 6 sophisticated algorithms, each contributing to an overall relationship score:
+
+#### 11.3.1 Shared Token Detection (Weight: 30%)
+
+Identifies wallets holding the same token mint addresses.
+
+**Formula**: `Score = Min(1.0, SharedTokenCount / 10) × 0.3`
+
+**Evidence Collected**:
+- Number of shared tokens
+- List of common token mint addresses
+- Token account details for each wallet
+
+**Threshold**: Minimum 2 shared tokens (configurable)
+
+#### 11.3.2 Balance Similarity Analysis (Weight: 25%)
+
+Compares token balances for shared tokens to detect similar holdings.
+
+**Formula**:
+``` markdown
+For each shared token:
+  Similarity = 1 - (|Balance1 - Balance2| / Average(Balance1, Balance2))
+
+Overall Score = Average(All Similarities) × 0.25
+```
+
+**Evidence Collected**:
+- Per-token similarity scores
+- Overall balance similarity percentage
+- Balance comparisons for each shared token
+
+**Threshold**: ≥ 80% similarity (configurable)
+
+#### 11.3.3 SOL Balance Similarity (Weight: 15%)
+
+Compares native SOL holdings between wallets.
+
+**Formula**: `Similarity = 1 - (|SOL1 - SOL2| / Average(SOL1, SOL2))`
+
+Applied if similarity > 80%: `Score = Similarity × 0.15`
+
+**Evidence Collected**:
+- Individual SOL balances
+- Similarity percentage
+- Balance difference metrics
+
+#### 11.3.4 Temporal Proximity Detection (Weight: 20%)
+
+Identifies wallets created around the same time by analyzing first transaction dates.
+
+**Formula**: `Score = ((7 - DaysDifference) / 7) × 0.2` (if < 7 days apart)
+
+**Evidence Collected**:
+- First transaction timestamps
+- Days difference between creations
+- Creation date proximity score
+
+**Window**: 7-day detection window (hardcoded for optimal results)
+
+#### 11.3.5 Activity Correlation (Weight: 10%)
+
+Compares transaction activity levels to detect similar usage patterns.
+
+**Formula**: `Similarity = 1 - (|TxCount1 - TxCount2| / Average(TxCount1, TxCount2))`
+
+Applied if similarity > 75%: `Score = Similarity × 0.1`
+
+**Evidence Collected**:
+- Transaction counts for each wallet
+- Activity similarity percentage
+- Activity level comparison
+
+#### 11.3.6 Cluster Identification
+
+Groups wallets into clusters using graph traversal algorithm:
+
+1. Start with each unprocessed wallet as potential cluster seed
+2. Find all relationships above minimum score threshold
+3. Recursively traverse connected wallets via breadth-first search
+4. Calculate cluster statistics (average score, primary relationship type)
+5. Identify tokens shared across entire cluster
+
+**Cluster Metrics**:
+- Cluster size (number of wallets)
+- Average relationship score
+- Primary relationship type (most common)
+- Shared tokens across all members
+- Descriptive summary
+
+### 11.4 Relationship Types
+
+Based on total relationship score and evidence patterns, wallets are classified into specific types:
+
+| Type | Score Range | Description | Use Case |
+|------|-------------|-------------|----------|
+| **LikelyRelated** | ≥ 0.7 | High confidence of common control | Fraud investigation |
+| **PossiblyRelated** | 0.5 - 0.7 | Moderate probability of connection | Risk assessment |
+| **SharedTokens** | Variable | Multiple common token holdings | Portfolio analysis |
+| **MirrorTrading** | Variable | Similar trading patterns | Bot detection |
+| **SuspiciousActivity** | Variable | Multiple coordination indicators | Sybil detection |
+| **ClusterMember** | N/A | Part of identified wallet cluster | Network mapping |
+
+### 11.5 Data Models
+
+**Core Models** (in `The16Oracles.domain/Models/WalletAnalysis.cs`):
+
+- **WalletProfile**: Complete wallet data with SOL balance, token holdings, activity metadata
+- **TokenHolding**: Individual token account information (mint, balance, decimals)
+- **WalletMetadata**: Transaction counts, first/last activity dates, active status
+- **WalletRelationship**: Relationship between two wallets with score, type, and evidence
+- **RelationshipEvidence**: Supporting data for each detected relationship pattern
+- **WalletCluster**: Group of related wallets with statistics
+- **AnalysisConfiguration**: Configurable thresholds and parameters
+- **AnalyzeWalletsRequest/Response**: API request and response models
+
+### 11.6 API Usage
+
+**Basic Analysis Request**:
+
+``` csharp
+var analyzer = new WalletRelationshipAnalyzer("https://localhost:5001");
+
+var request = new AnalyzeWalletsRequest
+{
+    WalletAddresses = new List<string>
+    {
+        "7EqQdEULxWcraVx3mXKFjc84LhCkMGZCkRuDpvcMwJeK",
+        "CuieVDECxCmvJeUXm7JZgWQ3q5KkLJnqB4v1qJfnZQQ6P",
+        "FwYdNECxCmvJeUXm7JZgWQ3q5KkLJnqB4v1qJfnZQQ6P"
+    },
+    Configuration = new AnalysisConfiguration
+    {
+        MinimumRelationshipScore = 0.3m,
+        MinimumSharedTokens = 2,
+        TokenBalanceSimilarityThreshold = 0.8m,
+        IncludeInactiveWallets = false
+    },
+    Network = "devnet"
+};
+
+var response = await analyzer.AnalyzeWalletsAsync(request);
+```
+
+**Response Structure**:
+
+``` json
+{
+  "success": true,
+  "message": "Successfully analyzed 3 wallets, found 2 relationships and 1 clusters",
+  "data": {
+    "wallets": [...],
+    "relationships": [
+      {
+        "wallet1Address": "7EqQd...",
+        "wallet2Address": "CuieV...",
+        "relationshipScore": 0.65,
+        "type": "SharedTokens",
+        "evidence": [
+          {
+            "type": "SharedTokens",
+            "description": "Both wallets hold 5 common tokens",
+            "confidence": 0.3,
+            "details": {
+              "SharedTokenCount": 5,
+              "SharedTokens": ["token1", "token2", "..."]
+            }
+          }
+        ]
+      }
+    ],
+    "clusters": [...],
+    "statistics": {
+      "totalWalletsAnalyzed": 3,
+      "totalRelationshipsFound": 2,
+      "totalClustersFound": 1,
+      "analysisDuration": "00:00:12.34"
+    }
+  }
+}
+```
+
+### 11.7 Use Cases
+
+#### 11.7.1 Fraud Detection
+
+Identify coordinated wallet networks attempting to manipulate markets or exploit protocols:
+
+``` csharp
+var config = new AnalysisConfiguration
+{
+    MinimumRelationshipScore = 0.7m, // High threshold for fraud detection
+    MinimumSharedTokens = 5,
+    TokenBalanceSimilarityThreshold = 0.9m
+};
+
+// Flag clusters with SuspiciousActivity type
+var suspiciousClusters = result.Data.Clusters
+    .Where(c => c.PrimaryRelationType == RelationshipType.SuspiciousActivity)
+    .ToList();
+```
+
+#### 11.7.2 Airdrop Sybil Prevention
+
+Prevent multiple airdrop claims from related wallets:
+
+``` csharp
+var airdropParticipants = GetAirdropWallets();
+var result = await analyzer.AnalyzeWalletsAsync(new AnalyzeWalletsRequest
+{
+    WalletAddresses = airdropParticipants,
+    Configuration = new AnalysisConfiguration
+    {
+        MinimumRelationshipScore = 0.5m,
+        MinimumSharedTokens = 3
+    }
+});
+
+// Keep only one wallet from each cluster
+var sybilClusters = result.Data.Clusters
+    .Where(c => c.WalletAddresses.Count > 1);
+```
+
+#### 11.7.3 Whale Tracking
+
+Monitor related whale wallets for market intelligence:
+
+``` csharp
+var whaleWallets = GetLargeBalanceWallets(minBalance: 10000);
+var result = await analyzer.AnalyzeWalletsAsync(new AnalyzeWalletsRequest
+{
+    WalletAddresses = whaleWallets,
+    Configuration = new AnalysisConfiguration
+    {
+        MinimumRelationshipScore = 0.3m,
+        IncludeInactiveWallets = true
+    }
+});
+
+// Track whale clusters for coordinated movements
+foreach (var cluster in result.Data.Clusters)
+{
+    var totalBalance = cluster.WalletAddresses
+        .Sum(addr => GetWalletBalance(addr));
+    MonitorCluster(cluster, totalBalance);
+}
+```
+
+#### 11.7.4 Governance Vote Analysis
+
+Detect coordinated voting patterns in DAO governance:
+
+``` csharp
+var voters = GetProposalVoters(proposalId);
+var result = await analyzer.AnalyzeWalletsAsync(new AnalyzeWalletsRequest
+{
+    WalletAddresses = voters,
+    Configuration = new AnalysisConfiguration
+    {
+        MinimumRelationshipScore = 0.6m
+    }
+});
+
+// Identify voting cartels
+var coordinatedVoters = result.Data.Relationships
+    .Where(r => r.Type == RelationshipType.LikelyRelated ||
+                r.Type == RelationshipType.SuspiciousActivity)
+    .SelectMany(r => new[] { r.Wallet1Address, r.Wallet2Address })
+    .Distinct();
+```
+
+### 11.8 Performance & Scalability
+
+**Complexity**:
+- **Time**: O(n²) for pairwise wallet comparisons
+- **Space**: O(n × t) where t = average tokens per wallet
+- **Typical Duration**: 2-30 seconds for 10-100 wallets (network dependent)
+
+**Optimization Features**:
+- Configurable maximum wallet limit (default: 100)
+- Inactive wallet filtering to reduce dataset
+- Parallel HTTP requests for wallet data fetching
+- Efficient graph traversal for cluster identification
+- Early termination for low-score relationships
+
+**Scalability Recommendations**:
+- Batch large wallet sets into chunks of 100
+- Use devnet for testing to avoid rate limits
+- Adjust thresholds to reduce false positives
+- Cache wallet profiles for repeated analysis
+- Implement database storage for large-scale operations
+
+### 11.9 Testing & Quality Assurance
+
+**Comprehensive Test Coverage** (19 tests):
+- ✅ Model initialization and validation
+- ✅ Shared token detection algorithms
+- ✅ Balance similarity calculations
+- ✅ SOL balance comparison
+- ✅ Temporal proximity detection
+- ✅ Activity correlation analysis
+- ✅ Multiple wallet pair analysis
+- ✅ Relationship type classification
+- ✅ Cluster identification logic
+- ✅ Request/response model validation
+
+**Test Execution**:
+``` bash
+dotnet test --filter "FullyQualifiedName~WalletRelationshipAnalyzerTests"
+# Result: Passed! 19/19 tests, 100% success rate
+```
+
+### 11.10 Integration Examples
+
+**Discord Bot Integration**:
+
+``` csharp
+[Command("analyze-wallets")]
+public async Task AnalyzeWalletsCommand(CommandContext ctx, params string[] addresses)
+{
+    var analyzer = new WalletRelationshipAnalyzer("https://localhost:5001");
+    var response = await analyzer.AnalyzeWalletsAsync(new AnalyzeWalletsRequest
+    {
+        WalletAddresses = addresses.ToList()
+    });
+
+    if (response.Success)
+    {
+        var embed = new DiscordEmbedBuilder()
+            .WithTitle("Wallet Relationship Analysis")
+            .WithDescription($"Found {response.Data.Relationships.Count} relationships");
+        await ctx.RespondAsync(embed: embed);
+    }
+}
+```
+
+**Web API Endpoint**:
+
+``` csharp
+app.MapPost("/api/wallets/analyze", async (
+    IWalletRelationshipAnalyzer analyzer,
+    AnalyzeWalletsRequest request) =>
+{
+    var result = await analyzer.AnalyzeWalletsAsync(request);
+    return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+})
+.WithName("AnalyzeWallets")
+.WithTags("Wallet Analysis")
+.WithOpenApi();
+```
+
+### 11.11 Future Enhancements
+
+**Planned Features**:
+- [ ] Direct transfer detection between wallets
+- [ ] Time series analysis of balance changes
+- [ ] Machine learning for relationship prediction
+- [ ] Graph visualization export
+- [ ] Real-time monitoring with webhooks
+- [ ] Custom scoring weight configuration
+- [ ] Database caching for performance
+- [ ] NFT holding similarity analysis
+- [ ] Staking position correlation
+- [ ] Transaction pattern analysis
+
+**Integration Roadmap**:
+- Integration with Oracle 3 (Whale Behavior) for enhanced whale tracking
+- DAO governance plugin for automated sybil detection
+- Airdrop platform integration for eligibility verification
+- Risk management dashboard for fraud detection teams
+- Community analytics for Discord servers and DAOs
+
+### 11.12 Documentation
+
+**Complete Documentation Available**:
+- **WALLET_RELATIONSHIP_ANALYZER.md**: Comprehensive user guide (800+ lines)
+  - Architecture diagrams
+  - Algorithm explanations
+  - Usage examples
+  - Integration patterns
+  - Troubleshooting guide
+  - Performance optimization tips
+
+**Quick Start**:
+``` bash
+# In your application
+var analyzer = new WalletRelationshipAnalyzer("https://localhost:5001");
+var response = await analyzer.AnalyzeWalletsAsync(request);
+
+if (response.Success)
+{
+    Console.WriteLine($"Found {response.Data.Relationships.Count} relationships");
+    Console.WriteLine($"Identified {response.Data.Clusters.Count} clusters");
+}
+```
+
+---
+
+## 12. Use Cases
+
+### 12.1 Individual Traders & Investors
 
 - Monitor whale activity before making investment decisions
 - Track emerging narratives for early-stage opportunities
@@ -1041,7 +1484,7 @@ dotnet run
 - **Play Oracle Wars to learn about oracle functionality through gamification**
 - **Compete with community members for leaderboard rankings**
 
-### 11.2 DeFi Protocol Operators
+### 12.2 DeFi Protocol Operators
 
 - Monitor competitive liquidity flows
 - Track tokenomics innovations in the market
@@ -1051,7 +1494,7 @@ dotnet run
 - **Automate treasury management with multi-stablecoin trading**
 - **Leverage profitability rankings for capital efficiency**
 
-### 11.3 NFT Communities
+### 12.3 NFT Communities
 
 - Track floor price trends and sentiment
 - Identify emerging NFT opportunities
@@ -1061,7 +1504,7 @@ dotnet run
 - **Engage community with Oracle Wars tournaments and events**
 - **Use NFT Market Sentiment oracle in gameplay strategy**
 
-### 11.4 Blockchain Developers
+### 12.4 Blockchain Developers
 
 - Monitor L2 adoption trends for deployment decisions
 - Track technology adoption curves
@@ -1072,7 +1515,7 @@ dotnet run
 - **Integrate trading bot API into custom applications**
 - **Build on cascade trading framework for specialized strategies**
 
-### 11.5 Institutional Investors
+### 12.5 Institutional Investors
 
 - Comprehensive risk assessment across portfolio
 - Regulatory compliance monitoring
@@ -1082,7 +1525,7 @@ dotnet run
 - **Automated stablecoin position management with risk controls**
 - **Multi-pair cascade execution for capital efficiency**
 
-### 11.6 Automated Trading Strategies
+### 12.6 Automated Trading Strategies
 
 - **Stablecoin Yield Optimization**: Cascade through multiple pairs to capture arbitrage opportunities
 - **Market-Making Automation**: Dynamic pair ranking based on liquidity conditions
@@ -1090,7 +1533,7 @@ dotnet run
 - **Risk-Controlled Speculation**: Configurable limits prevent overexposure
 - **Multi-Chain Opportunity Capture**: Execute on Solana with plan to expand to other chains
 
-### 11.7 Discord Communities & DAOs
+### 12.7 Discord Communities & DAOs
 
 - **Integrate Oracle Wars for community engagement and gamification**
 - **Host tournaments with real prizes funded by DAO treasury**
@@ -1098,7 +1541,7 @@ dotnet run
 - **Community building through friendly competition and social interaction**
 - **Daily engagement incentives keeping members active**
 
-### 11.8 DevOps & Infrastructure Teams
+### 12.8 DevOps & Infrastructure Teams
 
 - **Network Health Monitoring**: Automated cluster version and validator checks
 - **Transaction Monitoring**: Track transaction counts and confirmation status
@@ -1108,16 +1551,16 @@ dotnet run
 
 ---
 
-## 11. Security & Reliability
+## 13. Security & Reliability
 
-### 11.1 Data Integrity
+### 13.1 Data Integrity
 
 - Multi-source data validation
 - Anomaly detection for data quality
 - Cryptographic verification where applicable
 - Source reputation scoring
 
-### 11.2 API Security
+### 13.2 API Security
 
 - Rate limiting to prevent abuse
 - API key management system
@@ -1126,7 +1569,7 @@ dotnet run
 - **Solana API Input Validation**: All CLI parameters sanitized before execution
 - **Process Isolation**: CLI commands executed in isolated processes
 
-### 11.3 Trading Bot Security
+### 13.3 Trading Bot Security
 
 - **Private Key Management**: User secrets and environment variables only (never committed to code)
 - **Transaction Signing**: Secure wallet operations with Solana SDK
@@ -1135,22 +1578,22 @@ dotnet run
 - **Audit Logging**: Comprehensive logging of all trade activity and decisions
 - **Configuration Validation**: Startup checks ensure valid settings before trading
 
-### 11.4 Testing & Quality Assurance
+### 13.4 Testing & Quality Assurance
 
-- Comprehensive unit test coverage (206+ tests across solution)
+- Comprehensive unit test coverage (225+ tests across solution)
 - Mock-based testing for external dependencies (Jupiter API, Solana RPC, CLI execution)
 - Integration testing for data pipelines
 - Performance testing for scalability
 - Continuous integration/deployment pipelines
 - **Test Coverage Breakdown**:
-  - Domain layer tests: 24 tests
+  - Domain layer tests: 43 tests (24 original + 19 wallet analyzer)
   - DAOA tests: 127 tests
     - Solana CLI service: 81 tests (all commands, flags, and scenarios)
     - SPL Token CLI service: 46 tests (all operations, delegation, wrapping)
     - Oracle implementations: Additional oracle tests
   - Trading bot tests: 39 tests
   - Additional model tests: 16+ tests
-  - Total: 206+ comprehensive unit tests
+  - Total: 225+ comprehensive unit tests
 - **Blockchain Integration Testing**:
   - Command construction validation for Solana CLI
   - Flag combination testing for SPL Token operations
@@ -1158,7 +1601,7 @@ dotnet run
   - Error handling for CLI execution failures
   - Timestamp and metadata validation
 
-### 11.5 Reliability
+### 13.5 Reliability
 
 - Graceful degradation when data sources fail
 - Redundant data source configurations
@@ -1177,7 +1620,7 @@ dotnet run
 
 ---
 
-## 12. Roadmap
+## 14. Roadmap
 
 ### Phase 1: Foundation (Completed)
 
@@ -1198,6 +1641,9 @@ dotnet run
 - ✅ **PvP battle system using live oracle confidence scores**
 - ✅ **Global leaderboard and daily reward system**
 - ✅ **Complete game documentation (4 guides, 2,100+ lines)**
+- ✅ **Wallet Relationship Analyzer for fraud detection and sybil prevention**
+- ✅ **6 pattern matching algorithms for wallet analysis**
+- ✅ **19 comprehensive tests for wallet analyzer**
 
 ### Phase 2: Data Integration
 
@@ -1248,19 +1694,21 @@ For detailed roadmap information, see [Roadmap.md](Roadmap.md).
 
 ---
 
-## 13. Conclusion
+## 15. Conclusion
 
-The 16 Oracles represents a paradigm shift in crypto market intelligence, blockchain operations, automated trading, and community gaming, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with **complete Solana blockchain integration** (48+ endpoints across Solana and SPL Token APIs), intelligent automated trading capabilities, **interactive Discord gaming** (Oracle Wars), and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence, clarity, and entertainment.
+The 16 Oracles represents a paradigm shift in crypto market intelligence, blockchain operations, automated trading, wallet analysis, and community gaming, moving beyond simple price feeds to comprehensive, specialized analysis across 16 critical dimensions of the blockchain ecosystem. By combining sophisticated oracle systems with **complete Solana blockchain integration** (48+ endpoints across Solana and SPL Token APIs), intelligent automated trading capabilities, **advanced wallet relationship analysis**, **interactive Discord gaming** (Oracle Wars), and community engagement tools, The 16 Oracles empowers users to navigate the complex crypto landscape with confidence, clarity, and entertainment.
 
 The **Solana CLI Web API wrapper** (25+ endpoints) provides seamless blockchain access for account management, transaction operations, validator monitoring, and staking functions. The **SPL Token CLI Web API wrapper** (23+ endpoints) extends this with comprehensive token management including creation, minting, burning, transfers, delegation, and Token-2022 program support. Together, these integrations bridge the gap between high-level oracle intelligence and low-level blockchain operations, enabling developers to build comprehensive blockchain applications on a unified platform.
 
-The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (206+ unit tests across the solution, including 127 blockchain integration tests) guarantees reliability.
+The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (225+ unit tests across the solution, including 127 blockchain integration tests and 19 wallet analyzer tests) guarantees reliability.
+
+The **Wallet Relationship Analyzer** provides critical security and compliance capabilities through advanced pattern matching algorithms. By analyzing shared tokens, balance patterns, temporal proximity, and activity correlations across Solana wallets, the analyzer enables detection of fraud, sybil attacks, whale clusters, and coordinated governance voting. With 6 specialized algorithms and comprehensive test coverage, this tool empowers users to maintain security and trust in their blockchain operations.
 
 **Oracle Wars** demonstrates the platform's innovative approach to community engagement by gamifying oracle intelligence. With 17 Discord commands, 9 game API endpoints, and a sophisticated battle system powered by live oracle data, Oracle Wars transforms market intelligence into an interactive, competitive experience. Players earn rewards, climb leaderboards, and learn about oracle functionality through engaging gameplay, creating a unique bridge between education and entertainment.
 
-The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, blockchain integrations, trading strategies, gaming features, and analytical capabilities as the market demands.
+The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, blockchain integrations, trading strategies, wallet analysis capabilities, gaming features, and analytical capabilities as the market demands.
 
-Through open API access, robust testing (206+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), interactive gaming platform (Oracle Wars), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, automated trading execution, and community engagement, serving traders, developers, investors, gamers, and communities worldwide.
+Through open API access, robust testing (225+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), advanced wallet relationship analysis, interactive gaming platform (Oracle Wars), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, automated trading execution, fraud detection, and community engagement, serving traders, developers, investors, security analysts, gamers, and communities worldwide.
 
 ---
 
@@ -1281,6 +1729,8 @@ Through open API access, robust testing (206+ tests), secure trading infrastruct
   - See `ORACLE_WARS_GAME.md` for complete API reference
   - See `DISCORD_ORACLE_WARS.md` for Discord bot integration guide
   - See `ORACLE_WARS_SUMMARY.md` for implementation summary
+- **Wallet Analysis Documentation**:
+  - See `WALLET_RELATIONSHIP_ANALYZER.md` for comprehensive wallet analyzer guide
 - **Roadmap**: See `Roadmap.md` for development timeline
 
 ---

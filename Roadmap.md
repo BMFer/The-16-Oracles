@@ -35,8 +35,27 @@
   - [x] Rich Discord embeds with color-coded responses
   - [x] OracleWarsApiService HTTP client (350+ lines)
   - [x] Complete documentation suite (4 files, 2,100+ lines)
-- [x] Comprehensive unit test coverage (206+ tests total)
-  - [x] The16Oracles.domain.nunit (24 tests passing)
+- [x] **Wallet Relationship Analyzer (Advanced Pattern Matching)**
+  - [x] WalletRelationshipAnalyzer service (665 lines of analysis code)
+  - [x] 6 sophisticated pattern matching algorithms with weighted scoring
+    - [x] Shared Token Detection (30% weight)
+    - [x] Balance Similarity Analysis (25% weight)
+    - [x] SOL Balance Similarity (15% weight)
+    - [x] Temporal Proximity Detection (20% weight)
+    - [x] Activity Correlation (10% weight)
+    - [x] Cluster Identification (graph traversal algorithm)
+  - [x] 12 comprehensive data models (WalletAnalysis.cs)
+  - [x] 6 relationship type classifications (LikelyRelated, PossiblyRelated, SharedTokens, etc.)
+  - [x] HTTP client integration with DAOA Solana/SPL Token endpoints
+  - [x] Evidence-based analysis with confidence scoring
+  - [x] Configurable thresholds and parameters (AnalysisConfiguration)
+  - [x] 19 comprehensive unit tests with 100% pass rate
+  - [x] Complete documentation (WALLET_RELATIONSHIP_ANALYZER.md, 800+ lines)
+  - [x] Use cases: fraud detection, sybil prevention, whale tracking, governance analysis
+- [x] Comprehensive unit test coverage (225+ tests total)
+  - [x] The16Oracles.domain.nunit (43 tests passing)
+    - [x] Original domain tests (24 tests)
+    - [x] Wallet Relationship Analyzer tests (19 tests)
   - [x] The16Oracles.DAOA.nunit (127 tests passing)
     - [x] Solana CLI service (81 tests)
     - [x] SPL Token CLI service (46 tests)
@@ -71,6 +90,18 @@
 - [ ] **Automated profitability score updates based on oracle data**
 - [ ] **Integration of Stablecoin Flow Analysis oracle with trading bot**
 - [ ] **Validator & Node Economics oracle integration with Solana CLI API**
+- [ ] **Wallet Relationship Analyzer Enhancements**
+  - [ ] Direct transfer detection between wallets using transaction history
+  - [ ] Time series analysis of balance changes and patterns
+  - [ ] Machine learning models for relationship prediction
+  - [ ] Graph visualization export (GraphML, DOT formats)
+  - [ ] Real-time monitoring with webhook notifications
+  - [ ] Custom scoring weight configuration per algorithm
+  - [ ] Database caching for wallet profiles (PostgreSQL/Redis)
+  - [ ] NFT holding similarity analysis
+  - [ ] Staking position correlation detection
+  - [ ] Transaction pattern analysis (timing, amounts, frequencies)
+  - [ ] Integration with Oracle 3 (Whale Behavior) for enhanced tracking
 
 ## Phase 3: Discord Bot Expansion
 - [x] **Oracle Wars game mechanics implementation (Completed)**
@@ -157,6 +188,17 @@
   - [ ] Guild/team performance analytics
   - [ ] Strategic recommendations based on player behavior
   - [ ] Global game economy metrics (SOL circulation, oracle usage)
+- [ ] **Wallet Relationship Analyzer Visualization**
+  - [ ] Interactive network graph of wallet relationships
+  - [ ] Cluster visualization with color-coded relationship strengths
+  - [ ] Timeline view of wallet creation and activity patterns
+  - [ ] Heatmap showing token holding similarities
+  - [ ] Relationship evidence explorer with drill-down capabilities
+  - [ ] Risk scoring dashboard for suspicious wallet clusters
+  - [ ] Whale cluster tracking with real-time balance updates
+  - [ ] Governance voting pattern analysis visualization
+  - [ ] Export functionality for fraud investigation reports
+  - [ ] Integration with Discord bot for wallet analysis commands
 
 ## Phase 6: Security & Scalability
 - [ ] Comprehensive security audit
@@ -204,6 +246,16 @@
   - [ ] Community voting on game balance changes
   - [ ] Seasonal leaderboards with exclusive rewards
   - [ ] Integration with other Discord bot games
+- [ ] **Wallet Analyzer Community Features**
+  - [ ] Public fraud detection service for community-reported wallets
+  - [ ] DAO governance plugin for automated sybil detection
+  - [ ] Airdrop platform integration for eligibility verification
+  - [ ] Shared wallet watchlists and alerts
+  - [ ] Community-contributed relationship detection algorithms
+  - [ ] Whale tracking dashboard with public leaderboards
+  - [ ] Educational content on wallet analysis and security
+  - [ ] API for third-party security tool integration
+  - [ ] Risk management dashboard for DeFi protocol operators
 
 ## Future Considerations
 
@@ -257,7 +309,8 @@
   - [x] DISCORD_ORACLE_WARS.md - Discord integration guide (~650 lines)
   - [x] QUICK_START_ORACLE_WARS.md - 5-minute setup guide (~400 lines)
   - [x] ORACLE_WARS_SUMMARY.md - Implementation summary (~550 lines)
-  - [x] Roadmap.md updated with latest progress including Oracle Wars
+  - [x] WALLET_RELATIONSHIP_ANALYZER.md - Comprehensive wallet analyzer guide (~800 lines)
+  - [x] Roadmap.md updated with latest progress including Wallet Analyzer
 - [ ] CI/CD pipeline enhancements
 - [ ] Automated testing coverage improvements
   - [x] Domain layer test coverage (24 tests)
