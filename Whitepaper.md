@@ -23,7 +23,7 @@ The 16 Oracles is a decentralized autonomous oracle application (DAOA) designed 
 8. [Automated Trading Integration](#8-automated-trading-integration)
 9. [Community Integration](#9-community-integration)
 10. [Oracle Wars: Discord Gaming Platform](#10-oracle-wars-discord-gaming-platform)
-11. [Wallet Relationship Analyzer](#11-wallet-relationship-analyzer)
+11. [Advanced Wallet & Token Analysis Suite](#11-advanced-wallet--token-analysis-suite)
 12. [Use Cases](#12-use-cases)
 13. [Security & Reliability](#13-security--reliability)
 14. [Roadmap](#14-roadmap)
@@ -314,7 +314,7 @@ The16Oracles.sln
 * The16Oracles.console           # Console application for Discord bots + Oracle Wars game commands
 * The16Oracles.www.Server        # ASP.NET Core 8.0 backend with trading bot system
 * the16oracles.www.client        # Angular 17 frontend SPA
-* The16Oracles.domain.nunit      # Unit tests for domain layer (24 tests)
+* The16Oracles.domain.nunit      # Unit tests for domain layer (98 tests: 19 wallet analyzer, 30 supply analyzer, 25 creator analyzer, 24 original)
 * The16Oracles.DAOA.nunit        # Unit tests for DAOA Web API (127 tests: 81 Solana, 46 SPL Token)
 * The16Oracles.www.Server.nunit  # Unit tests for trading bot (39 tests)
 ```
@@ -1027,15 +1027,27 @@ dotnet run
 
 ---
 
-## 11. Wallet Relationship Analyzer
+## 11. Advanced Wallet & Token Analysis Suite
 
 ### 11.1 Overview
+
+The 16 Oracles features a comprehensive analysis suite with three powerful tools for Solana blockchain intelligence: **Wallet Relationship Analyzer**, **Token Supply Concentration Analyzer**, and **Token Creator Analyzer**. Together, these tools provide complete visibility into wallet relationships, token distribution risks, and token creation authenticity.
+
+**Core Capabilities**:
+- Identify relationships between wallets through pattern matching
+- Detect supply concentration and suspicious token holders
+- Retrieve and verify token creator addresses (mint authorities)
+- Enable fraud detection, rug pull prevention, and legitimacy verification
+
+### 11.2 Wallet Relationship Analyzer
+
+#### 11.2.1 Overview
 
 The Wallet Relationship Analyzer is an advanced pattern matching tool that identifies relationships between Solana wallets by analyzing shared tokens, balance patterns, temporal proximity, and activity correlations. This powerful analysis capability enables detection of fraud, sybil attacks, whale clusters, and coordinated governance voting.
 
 **Core Purpose**: Analyze multiple wallet addresses simultaneously to discover hidden connections, identify suspicious patterns, and cluster related wallets based on on-chain behavior and holdings.
 
-### 11.2 Architecture
+#### 11.2.2 Architecture
 
 **Multi-Layer Analysis System**:
 
@@ -1467,6 +1479,190 @@ if (response.Success)
 }
 ```
 
+### 11.3 Token Supply Concentration Analyzer
+
+#### 11.3.1 Overview
+
+The Token Supply Concentration Analyzer provides comprehensive analysis of token supply distribution and suspicious holder detection for Solana SPL tokens. By calculating concentration metrics and identifying suspicious patterns, this tool enables rug pull detection, fair launch verification, and token health monitoring.
+
+**Core Purpose**: Analyze token holder distributions to detect dangerous supply concentration, identify suspicious holders, and assess rug pull risk through advanced statistical metrics and pattern detection.
+
+#### 11.3.2 Key Features
+
+**Supply Concentration Metrics**:
+- **Gini Coefficient**: Measures wealth inequality (0 = perfect equality, 1 = perfect inequality)
+- **Herfindahl-Hirschman Index (HHI)**: Sum of squared market shares for concentration analysis
+- **Top Holder Percentages**: Track top 1, 5, 10, and 20 holder concentrations
+- **Composite Concentration Score**: 0-100 risk score combining multiple factors
+- **6-Level Risk Assessment**: VeryLow, Low, Medium, High, VeryHigh, Critical
+
+**Suspicious Holder Detection** (9 Flags):
+1. **NewWallet**: Created within last 7 days
+2. **LowActivity**: Fewer than 10 transactions
+3. **LargeConcentration**: Holds >5% of total supply
+4. **RelatedToOtherHolders**: Connected to other large holders via WalletRelationshipAnalyzer
+5. **SimilarBalances**: Similar token amounts to other wallets
+6. **SimilarCreationTime**: Created around same time as other holders
+7. **OnlyThisToken**: No token diversification
+8. **NoSolBalance**: Insufficient SOL for transaction fees
+9. **RapidAccumulation**: Fast token accumulation pattern
+
+**Cluster Identification**:
+- Graph traversal algorithm identifies groups of related suspicious holders
+- Integration with WalletRelationshipAnalyzer for relationship detection
+- Aggregate metrics for each suspicious cluster
+
+#### 11.3.3 Use Cases
+
+**Rug Pull Detection**:
+``` csharp
+var analyzer = new TokenSupplyAnalyzer("https://localhost:5001");
+var result = await analyzer.AnalyzeTokenSupplyAsync(new AnalyzeTokenSupplyRequest
+{
+    TokenMintAddress = "SuspiciousToken...",
+    Network = "mainnet-beta"
+});
+
+if (result.Data.Concentration.RiskLevel == ConcentrationRisk.Critical)
+{
+    Console.WriteLine("WARNING: Extreme concentration - potential rug pull risk!");
+    Console.WriteLine($"Top holder: {result.Data.Concentration.Top1HolderPercentage:F1}%");
+}
+```
+
+**Fair Launch Verification**:
+``` csharp
+bool fairDistribution =
+    result.Data.Concentration.Top1HolderPercentage < 10 &&
+    result.Data.SuspiciousClusters.Count == 0 &&
+    result.Data.Concentration.RiskLevel <= ConcentrationRisk.Medium;
+```
+
+**Token Health Monitoring**:
+- Monitor concentration metrics over time
+- Alert on risk level increases
+- Track suspicious holder activity
+- Identify coordinated holder clusters
+
+#### 11.3.4 Testing & Quality Assurance
+
+**Comprehensive Test Coverage** (30 tests):
+- ✅ Model initialization and validation
+- ✅ Concentration calculation algorithms (Gini, HHI)
+- ✅ Top holder percentage calculations
+- ✅ Risk level classification
+- ✅ Suspicious holder detection with 9 flags
+- ✅ Cluster identification logic
+- ✅ Edge cases and error handling
+
+**Test Execution**:
+``` bash
+dotnet test --filter "FullyQualifiedName~TokenSupplyAnalyzerTests"
+# Result: Passed! 30/30 tests, 100% success rate
+```
+
+#### 11.3.5 Documentation
+
+**Complete Documentation Available**:
+- **TOKEN_SUPPLY_ANALYZER.md**: Comprehensive guide with architecture, algorithms, and use cases
+
+### 11.4 Token Creator Analyzer
+
+#### 11.4.1 Overview
+
+The Token Creator Analyzer retrieves token creator addresses (mint authorities) from token account lists, enabling portfolio analysis, legitimacy verification, and ecosystem auditing on Solana.
+
+**Core Purpose**: Get mint authority, freeze authority, supply, and decimals for any token. Group tokens by creator to identify common issuers and verify token legitimacy by checking if authorities are renounced.
+
+#### 11.4.2 Key Features
+
+**Token Creator Retrieval**:
+- Get mint authority (creator) for any SPL token
+- Retrieve freeze authority information
+- Access token supply and decimals
+- Check token initialization status
+- Verify if mint/freeze authorities are renounced
+
+**Account Analysis**:
+- Analyze multiple token accounts in one request
+- Filter zero-balance accounts
+- Track unique tokens and creators
+- Generate comprehensive statistics
+
+**Grouping & Organization**:
+- Group tokens by creator address
+- Count tokens per creator
+- Calculate total value held per creator
+- Filter by minimum token count
+
+#### 11.4.3 Use Cases
+
+**Portfolio Analysis**:
+``` csharp
+var analyzer = new TokenCreatorAnalyzer("https://localhost:5001");
+var response = await analyzer.GetTokenCreatorsAsync(new GetTokenCreatorsRequest
+{
+    AccountAddresses = portfolioAccounts,
+    Network = "mainnet-beta"
+});
+
+foreach (var account in response.Data.Accounts)
+{
+    var creator = account.CreatorInfo?.MintAuthority ?? "Renounced";
+    Console.WriteLine($"Token: {account.TokenMintAddress}");
+    Console.WriteLine($"Creator: {creator}");
+}
+```
+
+**Token Legitimacy Verification**:
+``` csharp
+var creatorInfo = await analyzer.GetTokenCreatorInfoAsync(tokenMint, "mainnet-beta");
+
+if (creatorInfo.MintAuthority == null)
+{
+    Console.WriteLine("✓ Mint authority renounced - supply is fixed");
+}
+else
+{
+    Console.WriteLine($"⚠ Creator can still mint: {creatorInfo.MintAuthority}");
+}
+```
+
+**Detect Common Creators**:
+``` csharp
+var groupResponse = await analyzer.GroupTokensByCreatorAsync(new GroupTokensByCreatorRequest
+{
+    AccountAddresses = tokenAccounts,
+    MinimumTokenCount = 2  // Only creators with 2+ tokens
+});
+
+foreach (var group in groupResponse.Data)
+{
+    Console.WriteLine($"Creator {group.CreatorAddress} created {group.TotalTokenCount} tokens");
+}
+```
+
+#### 11.4.4 Testing & Quality Assurance
+
+**Comprehensive Test Coverage** (25 tests):
+- ✅ Model initialization and validation
+- ✅ Token creator information retrieval
+- ✅ Account creator linking
+- ✅ Grouping logic and filtering
+- ✅ Request/response validation
+- ✅ Statistics calculations
+
+**Test Execution**:
+``` bash
+dotnet test --filter "FullyQualifiedName~TokenCreatorAnalyzerTests"
+# Result: Passed! 25/25 tests, 100% success rate
+```
+
+#### 11.4.5 Documentation
+
+**Complete Documentation Available**:
+- **TOKEN_CREATOR_ANALYZER.md**: Complete guide with usage examples and integration patterns
+
 ---
 
 ## 12. Use Cases
@@ -1580,20 +1776,20 @@ if (response.Success)
 
 ### 13.4 Testing & Quality Assurance
 
-- Comprehensive unit test coverage (225+ tests across solution)
+- Comprehensive unit test coverage (280+ tests across solution)
 - Mock-based testing for external dependencies (Jupiter API, Solana RPC, CLI execution)
 - Integration testing for data pipelines
 - Performance testing for scalability
 - Continuous integration/deployment pipelines
 - **Test Coverage Breakdown**:
-  - Domain layer tests: 43 tests (24 original + 19 wallet analyzer)
+  - Domain layer tests: 98 tests (24 original + 19 wallet analyzer + 30 supply analyzer + 25 creator analyzer)
   - DAOA tests: 127 tests
     - Solana CLI service: 81 tests (all commands, flags, and scenarios)
     - SPL Token CLI service: 46 tests (all operations, delegation, wrapping)
     - Oracle implementations: Additional oracle tests
   - Trading bot tests: 39 tests
   - Additional model tests: 16+ tests
-  - Total: 225+ comprehensive unit tests
+  - Total: 280+ comprehensive unit tests
 - **Blockchain Integration Testing**:
   - Command construction validation for Solana CLI
   - Flag combination testing for SPL Token operations
@@ -1644,6 +1840,13 @@ if (response.Success)
 - ✅ **Wallet Relationship Analyzer for fraud detection and sybil prevention**
 - ✅ **6 pattern matching algorithms for wallet analysis**
 - ✅ **19 comprehensive tests for wallet analyzer**
+- ✅ **Token Supply Concentration Analyzer for rug pull detection**
+- ✅ **Supply concentration metrics: Gini coefficient, HHI, 6-level risk assessment**
+- ✅ **9 suspicious holder detection flags with cluster identification**
+- ✅ **30 comprehensive tests for supply analyzer**
+- ✅ **Token Creator Analyzer for mint authority verification**
+- ✅ **Creator retrieval, grouping, and legitimacy verification**
+- ✅ **25 comprehensive tests for creator analyzer**
 
 ### Phase 2: Data Integration
 
@@ -1700,15 +1903,23 @@ The 16 Oracles represents a paradigm shift in crypto market intelligence, blockc
 
 The **Solana CLI Web API wrapper** (25+ endpoints) provides seamless blockchain access for account management, transaction operations, validator monitoring, and staking functions. The **SPL Token CLI Web API wrapper** (23+ endpoints) extends this with comprehensive token management including creation, minting, burning, transfers, delegation, and Token-2022 program support. Together, these integrations bridge the gap between high-level oracle intelligence and low-level blockchain operations, enabling developers to build comprehensive blockchain applications on a unified platform.
 
-The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (225+ unit tests across the solution, including 127 blockchain integration tests and 19 wallet analyzer tests) guarantees reliability.
+The **multi-stablecoin cascade trading system** demonstrates the platform's commitment to practical, real-world applications of oracle data. By leveraging dynamic profitability rankings and intelligent cascade execution, users can optimize capital efficiency while maintaining strict risk controls. The integration with Jupiter Aggregator ensures best-in-class execution, while comprehensive testing (280+ unit tests across the solution, including 127 blockchain integration tests, 19 wallet analyzer tests, 30 supply analyzer tests, and 25 creator analyzer tests) guarantees reliability.
 
-The **Wallet Relationship Analyzer** provides critical security and compliance capabilities through advanced pattern matching algorithms. By analyzing shared tokens, balance patterns, temporal proximity, and activity correlations across Solana wallets, the analyzer enables detection of fraud, sybil attacks, whale clusters, and coordinated governance voting. With 6 specialized algorithms and comprehensive test coverage, this tool empowers users to maintain security and trust in their blockchain operations.
+The **Advanced Wallet & Token Analysis Suite** provides critical security and compliance capabilities through three specialized analyzers:
+
+**Wallet Relationship Analyzer** employs 6 pattern matching algorithms to identify relationships between Solana wallets by analyzing shared tokens, balance patterns, temporal proximity, and activity correlations. This enables detection of fraud, sybil attacks, whale clusters, and coordinated governance voting.
+
+**Token Supply Concentration Analyzer** calculates Gini coefficient, Herfindahl-Hirschman Index, and top holder percentages to assess rug pull risk through supply concentration metrics. With 9 suspicious holder detection flags and cluster identification, it provides comprehensive token health monitoring and fair launch verification.
+
+**Token Creator Analyzer** retrieves mint authorities and freeze authorities from token account lists, enabling portfolio analysis and legitimacy verification. Users can verify if token authorities are renounced, group tokens by creator, and detect common issuers across their holdings.
+
+Together, these three analyzers provide comprehensive visibility into wallet relationships, token distribution risks, and token creation authenticity, empowering users to maintain security and trust in their blockchain operations.
 
 **Oracle Wars** demonstrates the platform's innovative approach to community engagement by gamifying oracle intelligence. With 17 Discord commands, 9 game API endpoints, and a sophisticated battle system powered by live oracle data, Oracle Wars transforms market intelligence into an interactive, competitive experience. Players earn rewards, climb leaderboards, and learn about oracle functionality through engaging gameplay, creating a unique bridge between education and entertainment.
 
 The modular, scalable architecture ensures that The 16 Oracles can evolve alongside the rapidly changing blockchain ecosystem, continuously adding new oracle types, blockchain integrations, trading strategies, wallet analysis capabilities, gaming features, and analytical capabilities as the market demands.
 
-Through open API access, robust testing (225+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), advanced wallet relationship analysis, interactive gaming platform (Oracle Wars), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, automated trading execution, fraud detection, and community engagement, serving traders, developers, investors, security analysts, gamers, and communities worldwide.
+Through open API access, robust testing (280+ tests), secure trading infrastructure, complete blockchain integration (Solana + SPL Token), advanced wallet & token analysis (relationship detection, supply concentration, creator verification), interactive gaming platform (Oracle Wars), and community-driven development, The 16 Oracles aims to become the standard for comprehensive crypto market intelligence, blockchain operations, automated trading execution, fraud detection, token security analysis, and community engagement, serving traders, developers, investors, security analysts, gamers, and communities worldwide.
 
 ---
 
@@ -1729,8 +1940,10 @@ Through open API access, robust testing (225+ tests), secure trading infrastruct
   - See `ORACLE_WARS_GAME.md` for complete API reference
   - See `DISCORD_ORACLE_WARS.md` for Discord bot integration guide
   - See `ORACLE_WARS_SUMMARY.md` for implementation summary
-- **Wallet Analysis Documentation**:
-  - See `WALLET_RELATIONSHIP_ANALYZER.md` for comprehensive wallet analyzer guide
+- **Wallet & Token Analysis Documentation**:
+  - See `WALLET_RELATIONSHIP_ANALYZER.md` for comprehensive wallet relationship analyzer guide
+  - See `TOKEN_SUPPLY_ANALYZER.md` for token supply concentration analyzer guide
+  - See `TOKEN_CREATOR_ANALYZER.md` for token creator analyzer guide
 - **Roadmap**: See `Roadmap.md` for development timeline
 
 ---

@@ -68,6 +68,25 @@
       - Integrates with DAOA Solana/SPL Token endpoints for wallet data
       - Comprehensive test coverage (19 unit tests)
       - Documented in WALLET_RELATIONSHIP_ANALYZER.md
+    - **Token Supply Concentration Analyzer**:
+      - Comprehensive token supply analysis and suspicious holder detection for Solana SPL tokens
+      - Supply concentration metrics: Gini coefficient, Herfindahl-Hirschman Index, top holder percentages
+      - 6-level risk assessment (VeryLow to Critical) with composite concentration scores
+      - 9 suspicious holder detection flags: NewWallet, LowActivity, LargeConcentration, RelatedToOtherHolders, etc.
+      - Cluster identification for related suspicious holders using graph traversal
+      - Use cases: rug pull detection, fair launch verification, sybil attack detection, token health monitoring
+      - Integrates with TokenSupplyAnalyzer and WalletRelationshipAnalyzer services
+      - 30 comprehensive unit tests (all passed)
+      - Documented in TOKEN_SUPPLY_ANALYZER.md
+    - **Token Creator Analyzer**:
+      - Retrieve token creator addresses (mint authorities) from token account lists
+      - Get mint authority, freeze authority, supply, and decimals for any token
+      - Group tokens by creator to identify common issuers
+      - Verify token legitimacy by checking if mint/freeze authorities are renounced
+      - Use cases: portfolio analysis, common creator detection, token legitimacy verification, ecosystem auditing
+      - Integrates with DAOA SPL Token API endpoints
+      - 25 comprehensive unit tests (all passed)
+      - Documented in TOKEN_CREATOR_ANALYZER.md
   3. The16Oracles.console
     - Console application for testing and running Discord bots
     - Uses dependency injection to manage bot configurations
@@ -98,6 +117,11 @@
   6. The16Oracles.domain.nunit
     - NUnit test project for domain layer testing
     - Built with .NET 9.0 and NUnit 4.2.2
+    - Comprehensive test coverage (98+ tests):
+      - WalletRelationshipAnalyzer: 19 tests
+      - TokenSupplyAnalyzer: 30 tests
+      - TokenCreatorAnalyzer: 25 tests
+      - Original domain tests: 24 tests
     - Includes code coverage collection via coverlet
     - Ensures reliability and quality of domain logic and services
   7. The16Oracles.DAOA.nunit
@@ -130,11 +154,21 @@
   - Quick start guide in QUICK_START_ORACLE_WARS.md
   - Complete documentation: ORACLE_WARS_GAME.md, DISCORD_ORACLE_WARS.md, ORACLE_WARS_SUMMARY.md
 - **Automated Trading**: Multi-stablecoin cascade trading bot on Solana with Jupiter Aggregator integration (documented in The16Oracles.www.Server/TRADEBOT_README.md)
-- **Wallet Relationship Analyzer**: Advanced pattern matching tool for identifying relationships between Solana wallets
-  - 6 detection algorithms analyzing shared tokens, balances, temporal patterns, and activity
-  - Identifies fraud, sybil attacks, whale clusters, and coordinated governance voting
-  - Real-time analysis using live blockchain data from DAOA endpoints
-  - Documented in WALLET_RELATIONSHIP_ANALYZER.md
+- **Advanced Wallet & Token Analysis Suite**: Three powerful analyzers for Solana blockchain intelligence
+  - **Wallet Relationship Analyzer**: Pattern matching to identify relationships between wallets
+    - 6 detection algorithms analyzing shared tokens, balances, temporal patterns, and activity
+    - Identifies fraud, sybil attacks, whale clusters, and coordinated governance voting
+    - 19 unit tests, documented in WALLET_RELATIONSHIP_ANALYZER.md
+  - **Token Supply Concentration Analyzer**: Detect supply concentration and suspicious holders
+    - Gini coefficient, Herfindahl-Hirschman Index, 6-level risk assessment (VeryLow to Critical)
+    - 9 suspicious holder detection flags with cluster identification
+    - Use cases: rug pull detection, fair launch verification, sybil attack detection
+    - 30 unit tests, documented in TOKEN_SUPPLY_ANALYZER.md
+  - **Token Creator Analyzer**: Retrieve and analyze token creator addresses (mint authorities)
+    - Get mint/freeze authorities, verify if renounced, group tokens by creator
+    - Use cases: portfolio analysis, legitimacy verification, ecosystem auditing
+    - 25 unit tests, documented in TOKEN_CREATOR_ANALYZER.md
+  - All analyzers integrate with DAOA endpoints for real-time blockchain data
 - **Solana Blockchain Integration**:
   - Solana CLI Web API: 25+ endpoints for blockchain operations (documented in SolanaAPI.md)
   - SPL Token CLI Web API: 23+ endpoints for token operations (documented in SPL-TOKEN-API.md)
@@ -143,16 +177,20 @@
   - AI-powered NFT community bot with OpenAI integration for welcome messages, NFT showcases, and war game mechanics (documented in DiscordBot.md)
   - Oracle Wars game integration with DSharpPlus 4.5.1 for interactive gameplay
 - **Architecture**: Clean separation with domain logic, console runner, web API layers, automated trading services, Discord game integration, and comprehensive blockchain integration
-- **Testing**: Comprehensive unit test coverage across all projects with 225+ total tests:
-  - The16Oracles.domain.nunit: 43 tests (24 original + 19 wallet analyzer)
+- **Testing**: Comprehensive unit test coverage across all projects with 280+ total tests:
+  - The16Oracles.domain.nunit: 98 tests
+    - WalletRelationshipAnalyzer: 19 tests
+    - TokenSupplyAnalyzer: 30 tests
+    - TokenCreatorAnalyzer: 25 tests
+    - Original domain tests: 24 tests
   - The16Oracles.DAOA.nunit: 127 tests (81 Solana CLI, 46 SPL Token CLI)
   - The16Oracles.www.Server.nunit: 39 tests (trading bot)
   - Additional: 16+ oracle and model tests
   - Oracle Wars game: Manual testing via Discord and Swagger UI
-  - Wallet Relationship Analyzer: 19 comprehensive unit tests
+  - All analyzer tests pass with 100% success rate
 - **Copyright**: © 2025 Jerrame Hertz, All Rights Reserved
 
-  This is a comprehensive crypto analytics, automated trading, blockchain operations, Discord gaming, wallet analysis, and community engagement platform combining oracle data feeds, full Solana and SPL Token CLI integration, intelligent trading bots, interactive Discord games, advanced wallet relationship detection, and community features.
+  This is a comprehensive crypto analytics, automated trading, blockchain operations, Discord gaming, and advanced token analysis platform combining oracle data feeds, full Solana and SPL Token CLI integration, intelligent trading bots, interactive Discord games, wallet relationship detection, supply concentration analysis, token creator verification, and community features.
 
   Quick Start Guides
 
@@ -160,4 +198,7 @@
   - **Trading Bot**: See The16Oracles.www.Server/TRADEBOT_README.md for configuration
   - **Solana API**: See SolanaAPI.md and SPL-TOKEN-API.md for endpoint documentation
   - **Discord Bot**: See DiscordBot.md for community bot setup
-  - **Wallet Analyzer**: See WALLET_RELATIONSHIP_ANALYZER.md for usage and integration examples
+  - **Analysis Suite**:
+    - **Wallet Relationships**: WALLET_RELATIONSHIP_ANALYZER.md - Detect wallet relationships and clusters
+    - **Supply Concentration**: TOKEN_SUPPLY_ANALYZER.md - Analyze token distribution and detect suspicious holders
+    - **Token Creators**: TOKEN_CREATOR_ANALYZER.md - Get creator addresses and verify token legitimacy
